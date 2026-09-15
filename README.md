@@ -30,6 +30,11 @@ per sesi.)
 Cara mengaktifkan sekali saja: **Settings → Pages → Source: GitHub Actions**, lalu jalankan
 workflow "Deploy web demo to GitHub Pages".
 
+**Atau deploy ke Vercel** (juga dukung): import repo di <https://vercel.com/new> — `vercel.json`
+sudah memuat build command, output directory, SPA rewrite, dan cache header, jadi tidak perlu
+setelan manual. Vercel menyajikan di domain root (tanpa tambal `baseUrl`) dan memberi Preview URL
+per commit. Langkah lengkap: `docs/PUSH-TO-GITHUB.md` → "Deploy ke Vercel".
+
 ---
 
 ## Quick start

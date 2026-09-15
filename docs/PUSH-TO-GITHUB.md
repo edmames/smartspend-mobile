@@ -174,6 +174,80 @@ dilayani dari `/<nama-repo>/` → `expo export --platform web` → menambah `.no
 
 ---
 
+## Deploy ke Vercel (alternatif GitHub Pages)
+
+Kode ini **100% kompatibel dengan Vercel**. Ekspor web-nya adalah situs statis biasa
+(`npx expo export --platform web` → folder `dist/`, 23 file, aset di `/_expo/...`), jadi tidak
+butuh server, serverless function, atau Node runtime saat diakses. Konfigurasinya sudah ada di
+repo: `vercel.json`.
+
+### Kenapa Vercel justru lebih mudah daripada GitHub Pages
+
+| | Vercel | GitHub Pages |
+| --- | --- | --- |
+| Lokasi situs | Domain root (`https://<proyek>.vercel.app/`) | Subpath (`/<nama-repo>/`) |
+| Tambal `baseUrl` | **Tidak perlu** — aset sudah root-relative | Perlu (sudah ditangani workflow) |
+| Deep link SPA | Rewrite `/(.*)` → `/index.html` di `vercel.json` | Perlu `404.html` |
+| Pratinjau per commit | ✅ URL unik tiap push/PR | ❌ hanya satu situs |
+| Rollback | ✅ satu klik ke deployment lama | ❌ perlu revert commit |
+| Lokasi kode | GitHub (Vercel menyambung ke repo) | GitHub |
+
+Dua-duanya menyajikan aplikasi dari **origin sungguhan**, jadi `localStorage` aktif dan data
+bertahan setelah reload — beda dengan iframe preview sandbox.
+
+### Langkah
+
+**Cara 1 — lewat dashboard (paling mudah)**
+
+1. Buka <https://vercel.com/new> → **Import Git Repository** → pilih `edmames/smartspend-mobile`.
+2. Karena ada `vercel.json`, biarkan semua setelan **default** (Vercel membaca build command &
+   output directory dari file itu). Kalau tidak terbaca, isi manual:
+   * Framework Preset: **Other**
+   * Build Command: `npx expo export --platform web`
+   * Output Directory: `dist`
+   * Install Command: `npm ci`
+3. **Environment Variables** (opsional, hanya kalau nanti memakai Supabase/Telegram):
+   `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`,
+   `EXPO_PUBLIC_TELEGRAM_BOT_TOKEN`. Aplikasi tetap jalan tanpa ini (offline-first).
+4. **Deploy**. Hasilnya di `https://smartspend-mobile.vercel.app` (atau nama lain yang Anda pilih).
+5. Setiap `git push` berikutnya otomatis membuat deployment baru, dan setiap PR mendapat
+   **Preview URL** sendiri untuk dites sebelum merge.
+
+**Cara 2 — lewat CLI**
+
+```bash
+npm i -g vercel
+cd smartspend-mobile
+vercel            # deploy pratinjau
+vercel --prod     # deploy produksi
+```
+
+### Yang perlu diperhatikan di Vercel
+
+* **Node 20+**: `package.json` sudah memuat `"engines": { "node": ">=20" }` supaya Vercel tidak
+  memakai versi lama (Expo SDK 57 butuh Node 20).
+* **Storage per-origin**: `https://xxx.vercel.app` dan URL pratinjau commit punya `localStorage`
+  masing-masing. Data yang dibuat di URL pratinjau **tidak** muncul di domain produksi.
+* **Paket gratis (Hobby)** hanya untuk penggunaan non-komersial. Kalau aplikasinya nanti dipakai
+  untuk usaha, pindah ke plan Pro.
+* **Jangan** menaruh kredensial di `vercel.json` — pakai Environment Variables.
+* Kalau nanti aplikasi memakai Expo API Routes (`output: "server"`), barulah Vercel Functions
+  dibutuhkan; selama `web.output` masih `"single"` (SPA), statis saja sudah cukup.
+
+---
+
+## Deploy ke layanan statis lain
+
+Karena output-nya statis, ini juga jalan di Netlify, Cloudflare Pages, Firebase Hosting, atau
+server Nginx apa pun. Aturan umumnya:
+
+* Build: `npm ci && npx expo export --platform web`
+* Publish/Output: `dist`
+* SPA fallback: arahkan semua rute ke `/index.html`
+* Base path: **root** (kecuali hosting di subpath → tambahkan `experiments.baseUrl` di `app.json`)
+
+---
+
 ## Rilis sebagai versi (opsional tapi disarankan)
 
 Repo ini sudah punya `CHANGELOG.md` dengan format Keep a Changelog. Untuk menerbitkan v1.0.0
@@ -200,6 +274,8 @@ di riwayat git. Kalau nanti aset Anda >50 MB, pertimbangkan **Git LFS** — tapi
 | --- | --- |
 | `.github/workflows/ci.yml` | Typecheck + 171 cek + export web pada setiap push/PR |
 | `.github/workflows/pages.yml` | Build & deploy demo web ke GitHub Pages |
+| `vercel.json` | Konfigurasi deploy Vercel (build statis, SPA rewrite, cache header) |
+| `package.json` → `engines.node` | Memastikan Vercel/CI memakai Node 20+ |
 | `CHANGELOG.md` | Release notes v1.0.0 (format Keep a Changelog) |
 | `.github/ISSUE_TEMPLATE/*` | Form laporan bug & permintaan fitur |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Checklist gate (typecheck/verify/docs) |

@@ -44,5 +44,8 @@
     "export:web": "expo export --platform web",
     "prebuild": "expo prebuild --clean"
   },
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
 }
