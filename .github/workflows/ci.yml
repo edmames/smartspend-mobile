@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: typecheck + logic checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # TypeScript strict: no `any`, no unused locals, no implicit overrides.
+      - name: Typecheck
+        run: npm run typecheck
+
+      # 171 assertions over the ledger rules, storage fallback, i18n and stores.
+      - name: Logic checks
+        run: npm run verify
+
+      # The web bundle must build (this is what `npm run web` serves).
+      - name: Export web bundle
+        run: npm run export:web
