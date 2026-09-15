@@ -127,7 +127,7 @@ types): `User`, `StoredCredential`, `AuthSession`, `Wallet`, `Transaction`, `Sav
 
 ```
 npm run typecheck   # 0 errors (strict)
-npm run verify      # 110 checks, 0 failures
+npm run verify      # 171 checks, 0 failures
 npx expo export --platform web   # Metro bundle succeeds
 ```
 

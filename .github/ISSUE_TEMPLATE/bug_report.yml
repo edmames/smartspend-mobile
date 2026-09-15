@@ -1,0 +1,38 @@
+name: Laporan bug
+description: Ada yang tidak jalan sesuai harapan
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Terima kasih sudah melaporkan. Isi sedetail mungkin supaya bisa direproduksi.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Apa yang terjadi?
+      description: Sertakan langkah reproduksi dan hasil yang Anda harapkan.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Web (browser normal)
+        - Web (preview sandbox / iframe)
+        - Android (Expo Go)
+        - iOS (Expo Go)
+        - Lainnya
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versi / commit
+      placeholder: v1.0.0 atau hash commit
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log atau tangkapan layar
+      description: Output `npm run verify` / konsol browser sangat membantu.
+    validations:
+      required: false

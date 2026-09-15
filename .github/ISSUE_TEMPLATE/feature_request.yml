@@ -1,0 +1,25 @@
+name: Permintaan fitur
+description: Usulan perbaikan atau fitur baru
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Masalah yang ingin diselesaikan
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Usulan solusi
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Dampak ke aturan inti
+      description: Proyek ini punya aturan keras (lihat README > Architecture).
+      options:
+        - label: Tidak mengubah skema data / skema ekspor JSON
+        - label: Tidak melanggar "buku besar sebagai satu-satunya sumber kebenaran"
+        - label: Tidak menambah dependensi baru

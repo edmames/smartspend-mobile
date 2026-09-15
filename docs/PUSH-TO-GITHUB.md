@@ -70,6 +70,71 @@ gh repo create smartspend-mobile --private --source=. --remote=origin --push
 
 ---
 
+## Cara 4 — .gitignore / .env manual
+
+Kalau Anda lebih suka memindahkan file satu-satu (drag & drop di web GitHub), unggah isi
+`smartspend-mobile-source.zip` **tanpa** `.git/`, `node_modules/`, `.expo/`, `dist/`, dan `.env`.
+Perhatikan: drag & drop tidak membawa riwayat commit, dan file `.github/` (workflow) harus
+di-commit lewat git supaya Actions jalan.
+
+---
+
+## Aktifkan demo web (GitHub Pages) — sekali klik
+
+1. Push repo-nya dulu (cara mana pun di atas).
+2. Buka **Settings → Pages** di repo → bagian **Source** pilih **GitHub Actions**.
+3. Buka tab **Actions** → workflow **"Deploy web demo to GitHub Pages"** → **Run workflow**.
+
+Setelah selesai, aplikasi live di:
+
+```
+https://<USERNAME>.github.io/smartspend-mobile/
+```
+
+Workflow `pages.yml` melakukan semuanya: `npm ci` → menambal `experiments.baseUrl` agar aset
+dilayani dari `/<nama-repo>/` → `expo export --platform web` → menambah `.nojekyll` (supaya folder
+`_expo` tidak dibuang Jekyll) → `404.html` untuk deep link (SPA) → deploy.
+
+> **Ini juga solusi untuk data.** Di GitHub Pages, origin-nya sungguhan sehingga `localStorage`
+> bekerja: akun dan transaksi bertahan setelah reload — beda dengan iframe preview sandbox di mana
+> storage diblokir dan data hanya bertahan per sesi.
+
+---
+
+## Rilis sebagai versi (opsional tapi disarankan)
+
+Repo ini sudah punya `CHANGELOG.md` dengan format Keep a Changelog. Untuk menerbitkan v1.0.0
+dengan file unduhan (bundle + zip) sebagai aset rilis:
+
+```bash
+git tag -a v1.0.0 -m "SmartSpend v1.0.0"
+git push origin v1.0.0
+```
+
+Lalu di GitHub: **Releases → Draft a new release → pilih tag `v1.0.0`** → tempel isi
+`CHANGELOG.md` → unggah `smartspend-mobile.bundle` dan `smartspend-mobile-source.zip` sebagai
+aset → **Publish release**.
+
+Alternatif lebih rapi untuk berkas besar (APK/AAB hasil EAS Build): simpan di **Releases**, bukan
+di riwayat git. Kalau nanti aset Anda >50 MB, pertimbangkan **Git LFS** — tapi untuk repo ini
+(2,5 MB tanpa `node_modules`) LFS belum perlu.
+
+---
+
+## Hal lain yang sudah tersedia di repo
+
+| Berkas | Fungsi |
+| --- | --- |
+| `.github/workflows/ci.yml` | Typecheck + 171 cek + export web pada setiap push/PR |
+| `.github/workflows/pages.yml` | Build & deploy demo web ke GitHub Pages |
+| `CHANGELOG.md` | Release notes v1.0.0 (format Keep a Changelog) |
+| `.github/ISSUE_TEMPLATE/*` | Form laporan bug & permintaan fitur |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Checklist gate (typecheck/verify/docs) |
+| `.gitattributes` | Normalisasi LF, penanda biner, dan linguist (agar SVG docs tidak dihitung sebagai kode) |
+| `LICENSE` | MIT — **ganti `<NAMA ANDA>` dengan nama Anda** |
+
+---
+
 ## Setelah ter-push
 
 * **CI langsung jalan.** `.github/workflows/ci.yml` menjalankan `npm ci`, `npm run typecheck`,
@@ -78,6 +143,8 @@ gh repo create smartspend-mobile --private --source=. --remote=origin --push
   aturan ledger, dan ringkasan design system (`docs/DESIGN-SYSTEM.md`).
 * **Pratinjau desain** ada di `docs/*.svg` (mock Beranda, form transaksi, penanda dompet) — bisa
   dibuka langsung di GitHub karena SVG dirender sebagai gambar.
+* **Badge di README** sudah menunjuk ke workflow Anda; ganti `<USERNAME>` di `README.md` (4 tempat)
+  dan di `CHANGELOG.md` (1 tempat) setelah repo dibuat.
 
 ## Yang TIDAK ikut ter-commit (memang disengaja)
 

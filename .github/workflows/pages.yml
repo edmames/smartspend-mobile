@@ -1,0 +1,81 @@
+name: Deploy web demo to GitHub Pages
+
+# Publishes the static web build to https://<owner>.github.io/<repo>/
+#
+# Why this is worth having: GitHub Pages serves the app from a real origin, so
+# localStorage works — accounts and transactions survive a reload (unlike the
+# sandboxed preview iframe, where storage is blocked).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build static web bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Pages serves the app from /<repo>/, so every asset URL needs that prefix.
+      # Patched here (not in app.json) so `npm run web` locally stays at "/".
+      - name: Point asset paths at the repository subpath
+        run: |
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+            cfg.expo.experiments = { ...(cfg.expo.experiments || {}), baseUrl: '/${{ github.event.repository.name }}' };
+            fs.writeFileSync('app.json', JSON.stringify(cfg, null, 2) + '\n');
+            console.log('baseUrl ->', cfg.expo.experiments.baseUrl);
+          "
+
+      - name: Export static web build
+        run: npx expo export --platform web
+
+      # .nojekyll keeps Jekyll away from the `_expo` folder (underscore dirs are
+      # dropped otherwise). 404.html is the SPA fallback for deep links such as
+      # /smartspend-mobile/transaction/new.
+      - name: Add Jekyll bypass and SPA fallback
+        run: |
+          touch dist/.nojekyll
+          cp dist/index.html dist/404.html
+          ls -a dist
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

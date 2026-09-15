@@ -1,11 +1,34 @@
 # SmartSpend — Personal Finance Mobile App (Expo + TypeScript)
 
+[![CI](https://github.com/<USERNAME>/smartspend-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/<USERNAME>/smartspend-mobile/actions/workflows/ci.yml)
+[![Deploy web demo](https://github.com/<USERNAME>/smartspend-mobile/actions/workflows/pages.yml/badge.svg)](https://github.com/<USERNAME>/smartspend-mobile/actions/workflows/pages.yml)
+![Expo SDK 57](https://img.shields.io/badge/Expo-SDK%2057-000020)
+![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6)
+![Logic checks](https://img.shields.io/badge/logic%20checks-171%2F171-2ea043)
+![License MIT](https://img.shields.io/badge/License-MIT-yellow)
+
 A mobile-first personal finance app built with **Expo (React Native)**, **TypeScript (strict)**,
 **Expo Router**, **Zustand** and **AsyncStorage**. Navy `#1e3a8a` + Electric Blue `#0ea5e9`, dark
 mode by default, bottom-tab navigation, card-based layout.
 
 The transaction ledger is the single source of truth: every wallet and savings balance is derived
 from it, and **no mutation is accepted if it would make any balance negative on any date**.
+
+---
+
+## Demo
+
+Setiap push ke `main` menerbitkan ulang build web statis ke **GitHub Pages**:
+
+> https://<USERNAME>.github.io/smartspend-mobile/
+
+Sumbernya adalah `npx expo export --platform web` (lihat `.github/workflows/pages.yml`).
+Halaman itu dilayani dari origin sungguhan, jadi **localStorage aktif**: akun dan transaksi
+bertahan setelah reload. (Di iframe preview sandbox, storage diblokir dan data hanya bertahan
+per sesi.)
+
+Cara mengaktifkan sekali saja: **Settings → Pages → Source: GitHub Actions**, lalu jalankan
+workflow "Deploy web demo to GitHub Pages".
 
 ---
 
@@ -16,7 +39,7 @@ cd smartspend-mobile
 npm install
 npm start           # Expo dev server (scan the QR with Expo Go)
 npm run web         # run in the browser
-npm run check       # typecheck + 110-check verification suite
+npm run check       # typecheck + 171-check verification suite
 ```
 
 First launch: create a local account (email + password) on the register screen — data is stored on
@@ -84,7 +107,7 @@ smartspend-mobile/
 │   ├── types/index.ts          # every domain type (single source of truth)
 │   ├── utils/                  # calculations, validation, formatting, date, constants (incl. i18n), haptics
 │   └── styles/                 # colors.ts, theme.ts
-├── scripts/verify.ts           # 110 checks: parsing, dates, ledger, reports, budgets, import/export
+├── scripts/verify.ts           # 171 checks: parsing, dates, ledger, reports, budgets, import/export
 ├── app.json · eas.json · tsconfig.json · package.json
 └── docs/SPEC-COMPLIANCE.md     # spec → implementation traceability + deviations
 ```

@@ -1,0 +1,16 @@
+# Normalize line endings for a cross-platform repo
+* text=auto eol=lf
+
+# Binary-ish assets: never touch
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.bundle binary
+
+# Generated / vendored — keep them out of language stats
+package-lock.json linguist-generated=true -diff
+docs/*.svg linguist-documentation
