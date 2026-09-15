@@ -99,7 +99,7 @@ export default function SavingsScreen() {
 
           <ProgressBar
             ratio={totals.goal > 0 ? totals.saved / totals.goal : 0}
-            color="rgba(255,255,255,0.92)"
+            color={theme.colors.primaryBright}
             trackColor="rgba(255,255,255,0.16)"
             height={6}
             style={{ marginTop: theme.spacing.md }}

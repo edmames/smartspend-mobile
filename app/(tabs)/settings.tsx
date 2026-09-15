@@ -166,7 +166,7 @@ export default function SettingsScreen() {
         <SectionHeader title={t('settings.account')} />
         <Card padded={false} style={{ paddingHorizontal: theme.spacing.card }}>
           <View style={styles.profile}>
-            <View style={[styles.avatar, { backgroundColor: `${theme.colors.primary}1f` }]}>
+            <View style={[styles.avatar, { backgroundColor: theme.colors.accentSoft, borderWidth: 1, borderColor: theme.colors.border }]}>
               <Icon name="person" size={20} color={theme.colors.primary} />
             </View>
             <View style={{ flex: 1, minWidth: 0 }}>

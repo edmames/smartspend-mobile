@@ -48,9 +48,8 @@ export function ScreenHeader({ title, subtitle, onBack, right, style, withInset 
           style={({ pressed }) => [
             styles.backButton,
             {
-              backgroundColor: theme.colors.cardAlt,
+              backgroundColor: pressed ? theme.colors.chipTint : theme.colors.cardAlt,
               borderRadius: theme.radius.md,
-              opacity: pressed ? theme.opacity.pressed : 1,
             },
           ]}
         >

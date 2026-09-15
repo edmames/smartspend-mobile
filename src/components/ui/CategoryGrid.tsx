@@ -3,7 +3,8 @@
  *
  * Replaces the old category dropdown: a wrapping grid of tiles (icon + label)
  * so the whole set stays visible in one glance and nothing is hidden behind a
- * picker. Tiles are flat by default and take the category tint once selected.
+ * picker. Idle tiles carry a neutral icon chip; the selected tile takes the
+ * category tint on its circle and a matching hairline edge.
  */
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme, useT } from '../../hooks/useTheme';
@@ -45,19 +46,19 @@ export function CategoryGrid({ categories, value, onChange, error, style }: Cate
               style={({ pressed }) => [
                 styles.tile,
                 {
-                  backgroundColor: selected ? `${meta.color}1f` : theme.colors.backgroundAlt,
-                  borderColor: selected ? `${meta.color}73` : 'transparent',
-                  opacity: pressed ? 0.85 : 1,
+                  backgroundColor: selected ? `${meta.color}14` : theme.colors.chipTint,
+                  borderColor: selected ? `${meta.color}66` : 'transparent',
+                  opacity: pressed ? 0.88 : 1,
                 },
               ]}
             >
               <View
                 style={[
                   styles.iconChip,
-                  { backgroundColor: selected ? `${meta.color}29` : theme.colors.chipTint },
+                  { backgroundColor: selected ? `${meta.color}2e` : theme.colors.chipTint },
                 ]}
               >
-                <Icon name={meta.icon as never} size={16} color={selected ? meta.color : theme.colors.textMuted} />
+                <Icon name={meta.icon as never} size={18} color={selected ? meta.color : theme.colors.textMuted} />
               </View>
 
               <AppText
@@ -65,7 +66,7 @@ export function CategoryGrid({ categories, value, onChange, error, style }: Cate
                 weight={selected ? 'semibold' : 'regular'}
                 color={selected ? theme.colors.text : theme.colors.textMuted}
                 numberOfLines={1}
-                style={{ marginTop: 6 }}
+                style={{ marginTop: 7 }}
               >
                 {t(`category.${key}` as never)}
               </AppText>
@@ -91,17 +92,17 @@ const styles = StyleSheet.create({
   },
   tile: {
     // Four per row on a 360–400px screen, more when there is room.
-    width: 74,
+    width: 76,
     paddingVertical: 10,
     paddingHorizontal: 4,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     alignItems: 'center',
   },
   iconChip: {
-    width: 30,
-    height: 30,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -93,7 +93,7 @@ export function SavingsMovementForm({
 
   return (
     <View>
-      <View style={[styles.summary, { backgroundColor: theme.colors.cardAlt, borderRadius: theme.radius.md }]}>
+      <View style={[styles.summary, { backgroundColor: theme.colors.surfaceSunken, borderRadius: theme.radius.md }]}>
         <Icon
           name={mode === 'deposit' ? 'arrow-down-circle-outline' : 'arrow-up-circle-outline'}
           size={20}

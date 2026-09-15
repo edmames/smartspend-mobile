@@ -115,7 +115,7 @@ export default function DashboardScreen() {
           {/* App bar — identity on the left, one glanceable line of context.  */}
           {/* ---------------------------------------------------------------- */}
           <View style={styles.appBar}>
-            <View style={[styles.avatar, { backgroundColor: `${theme.colors.primary}1f` }]}>
+            <View style={[styles.avatar, { backgroundColor: theme.colors.accentSoft, borderRadius: theme.radius.pill, borderWidth: 1, borderColor: theme.colors.border }]}>
               <AppText variant="caption" weight="bold" color={theme.colors.primary}>
                 {initial}
               </AppText>
@@ -143,7 +143,7 @@ export default function DashboardScreen() {
           {/* Hero — the one number that matters, plus its composition.        */}
           {/* ---------------------------------------------------------------- */}
           <HeroCard style={{ marginTop: theme.spacing.md }}>
-            <AppText variant="micro" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            <AppText variant="micro" style={{ color: 'rgba(255,255,255,0.62)' }}>
               {t('dashboard.total_money').toUpperCase()}
             </AppText>
 
@@ -171,8 +171,8 @@ export default function DashboardScreen() {
 
             {/* Composition: wallets vs savings, in one hairline bar. */}
             <View style={[styles.composition, { marginTop: theme.spacing.md }]}>
-              <View style={{ flex: ratio(walletsTotal), backgroundColor: '#ffffff', opacity: 0.94 }} />
-              <View style={{ flex: ratio(savingsTotals.saved), backgroundColor: '#ffffff', opacity: 0.34 }} />
+              <View style={{ flex: ratio(walletsTotal), backgroundColor: theme.colors.primaryBright, opacity: 0.95 }} />
+              <View style={{ flex: ratio(savingsTotals.saved), backgroundColor: theme.colors.primaryBright, opacity: 0.35 }} />
             </View>
           </HeroCard>
 
@@ -215,7 +215,7 @@ export default function DashboardScreen() {
                 <AppText variant="caption" tone="faint" numberOfLines={1}>
                   {t('dashboard.net')}
                 </AppText>
-                <Money value={summary.net} size="body" signed numberOfLines={1} />
+                <Money value={summary.net} size="body" signed tone="auto" numberOfLines={1} />
               </View>
             </View>
           </Card>
@@ -383,16 +383,15 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 11,
+    width: 34,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 11,
+    width: 34,
+    height: 34,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -112,7 +112,7 @@ export function WalletForm({ initial, wallets, onSubmit, onCancel, submitLabel }
                 style={({ pressed }) => [
                   styles.typeTile,
                   {
-                    backgroundColor: selected ? `${meta.color}1a` : theme.colors.backgroundAlt,
+                    backgroundColor: selected ? `${meta.color}1a` : theme.colors.cardAlt,
                     borderColor: selected ? `${meta.color}80` : theme.colors.border,
                     opacity: isEditing && !selected ? 0.45 : pressed ? 0.85 : 1,
                   },
@@ -155,7 +155,7 @@ export function WalletForm({ initial, wallets, onSubmit, onCancel, submitLabel }
               style={({ pressed }) => [
                 styles.brandChip,
                 {
-                  backgroundColor: brand === null ? theme.colors.chipTint : theme.colors.backgroundAlt,
+                  backgroundColor: brand === null ? theme.colors.chipTint : theme.colors.cardAlt,
                   borderColor: brand === null ? theme.colors.borderStrong : theme.colors.border,
                   opacity: pressed ? 0.85 : 1,
                 },
@@ -179,7 +179,7 @@ export function WalletForm({ initial, wallets, onSubmit, onCancel, submitLabel }
                   style={({ pressed }) => [
                     styles.brandChip,
                     {
-                      backgroundColor: selected ? `${meta.color}1f` : theme.colors.backgroundAlt,
+                      backgroundColor: selected ? `${meta.color}1f` : theme.colors.cardAlt,
                       borderColor: selected ? `${meta.color}80` : theme.colors.border,
                       opacity: pressed ? 0.85 : 1,
                     },

@@ -88,6 +88,8 @@ export default function RegisterScreen() {
                 borderRadius: theme.radius.xl,
                 padding: theme.spacing.xl,
                 marginTop: theme.spacing.lg,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
               },
             ]}
           >

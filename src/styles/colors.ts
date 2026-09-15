@@ -1,66 +1,66 @@
 /**
  * SmartSpend palette + semantic tokens.
  *
- * Design language: "quiet finance" — deep navy-black surfaces, ONE accent
- * (electric blue), muted semantic colors and desaturated category tints.
- * Borders are translucent hairlines rather than solid 1px outlines, so cards
- * read as layered surfaces instead of boxes.
+ * Design language: "midnight premium" — deep indigo-night surfaces, ONE accent
+ * (teal #14b8a6) that pops against the dark base, muted semantic colours and
+ * desaturated category tints. Borders are translucent hairlines rather than
+ * solid 1px outlines, so cards read as layered surfaces instead of boxes.
  */
 
 export const palette = {
-  /* Brand */
-  navy: '#1e3a8a',
-  navyDeep: '#122150',
-  blue: '#0ea5e9',
-  blueBright: '#38bdf8',
-  blueDeep: '#0284c7',
+  /* Brand — teal family */
+  teal: '#14b8a6',
+  tealBright: '#2dd4bf',
+  tealDeep: '#0d9488',
 
-  /* Neutrals — dark end */
-  ink950: '#080C16',
-  ink900: '#0B1120',
-  ink850: '#101827',
-  ink800: '#151E31',
-  ink750: '#1B253A',
-  ink700: '#243044',
-  ink600: '#334155',
-  ink500: '#64748b',
-  ink400: '#94a3b8',
-  ink300: '#cbd5e1',
-  ink200: '#e2e8f0',
-  ink100: '#f1f5f9',
-  ink50: '#f8fafc',
+  /* Neutrals — indigo night (dark end) */
+  night950: '#070b1f',
+  night900: '#0a0e27',
+  night850: '#0f1535',
+  night800: '#151d3f',
+  night750: '#1c2750',
+  night700: '#263258',
+  night600: '#3b4a75',
+  night500: '#64748b',
+  night400: '#9ca3af',
+  night300: '#cbd5e1',
+  night200: '#e2e8f0',
+  night100: '#f0f4f8',
+  night50: '#f8fafc',
   white: '#ffffff',
 
-  /* Semantic — softened for dark surfaces */
-  emerald: '#34d399',
+  /* Semantic — tuned for dark surfaces */
+  emerald: '#10b981',
   emeraldDeep: '#059669',
-  amber: '#fbbf24',
+  amber: '#f59e0b',
   amberDeep: '#d97706',
-  rose: '#fb7185',
-  roseDeep: '#e11d48',
-  violet: '#a78bfa',
-  teal: '#2dd4bf',
+  coral: '#f87171',
+  rose: '#ef4444',
+  roseDeep: '#dc2626',
+  violet: '#8b5cf6',
+  cyan: '#06b6d4',
+  blue: '#3b82f6',
 } as const;
 
 /**
- * Category tints — deliberately low-saturation so a list of them reads as one
- * cohesive system instead of a rainbow of pastel chips.
+ * Category tints — deliberately mid-saturation so a list of them reads as one
+ * cohesive system on the dark base instead of a rainbow of chips.
  */
 export const categoryTints = {
-  food: '#e0a06a',
-  transport: '#6fb0e6',
-  entertainment: '#a993e8',
-  shopping: '#e08cae',
-  health: '#5cc39b',
-  other: '#93a3b8',
-  salary: '#4fc08d',
-  bonus: '#54b8b0',
-  business: '#6fb0e6',
-  gift: '#e08cae',
-  investment: '#a993e8',
-  transfer: '#7d8ba1',
-  savings: '#6fb0e6',
-  initial: '#93a3b8',
+  food: '#fb923c',
+  transport: '#38bdf8',
+  entertainment: '#a78bfa',
+  shopping: '#f472b6',
+  health: '#34d399',
+  other: '#94a3b8',
+  salary: '#34d399',
+  bonus: '#2dd4bf',
+  business: '#38bdf8',
+  gift: '#f472b6',
+  investment: '#a78bfa',
+  transfer: '#8b5cf6',
+  savings: '#06b6d4',
+  initial: '#94a3b8',
 } as const;
 
 export interface ThemeColors {
@@ -70,9 +70,9 @@ export interface ThemeColors {
   backgroundAlt: string;
   /** Card surface. */
   card: string;
-  /** Surface sitting on top of a card (rows, inputs). */
+  /** Surface sitting on top of a card (rows, inputs, pressed states). */
   cardAlt: string;
-  /** Surface that reads "recessed" (skeletons, empty slots). */
+  /** Surface that reads "recessed" (skeletons, empty slots, tracks). */
   surfaceSunken: string;
   /** Hairline divider — translucent, never a solid outline. */
   border: string;
@@ -89,13 +89,20 @@ export interface ThemeColors {
   primaryDeep: string;
   primaryBright: string;
   onPrimary: string;
-  /** Accent used when the app needs "attention without alarm". */
+  /** Accent used when the app needs "attention without alarm" (≈10% teal). */
   accentSoft: string;
 
   success: string;
   warning: string;
   danger: string;
   info: string;
+
+  /** Ledger-direction colours, separate from status colours. */
+  incomeColor: string;
+  /** Softer coral for expenses — reads on dark without shouting. */
+  expenseColor: string;
+  transferColor: string;
+  savingsColor: string;
 
   overlay: string;
   shadow: string;
@@ -106,80 +113,90 @@ export interface ThemeColors {
   skeleton: string;
   /** Hero gradient stops. */
   heroGradient: readonly [string, string, string];
-  /** Neutral tint for icon chips (12% of textMuted). */
+  /** Neutral tint for icon chips (~7% of text). */
   chipTint: string;
 }
 
 export const darkThemeColors: ThemeColors = {
-  background: palette.ink950,
-  backgroundAlt: palette.ink900,
-  card: palette.ink850,
-  cardAlt: palette.ink800,
-  surfaceSunken: '#0d1424',
-  border: 'rgba(148, 163, 184, 0.12)',
-  borderStrong: 'rgba(148, 163, 184, 0.22)',
+  background: palette.night900,
+  backgroundAlt: palette.night850,
+  card: palette.night850,
+  cardAlt: palette.night800,
+  surfaceSunken: '#080c22',
+  border: 'rgba(229, 231, 235, 0.1)',
+  borderStrong: 'rgba(229, 231, 235, 0.2)',
 
-  text: '#eef2f8',
-  textMedium: '#c3cddc',
-  textMuted: '#8a97ab',
-  textFaint: '#5f6b7f',
-  textInverse: palette.ink900,
+  text: palette.night100,
+  textMedium: '#c7cfdd',
+  textMuted: palette.night400,
+  textFaint: '#6b7280',
+  textInverse: palette.night900,
 
-  primary: palette.blue,
-  primaryDeep: palette.navy,
-  primaryBright: palette.blueBright,
-  onPrimary: '#04121f',
-  accentSoft: 'rgba(14, 165, 233, 0.14)',
+  primary: palette.teal,
+  primaryDeep: palette.tealDeep,
+  primaryBright: palette.tealBright,
+  onPrimary: '#03211d',
+  accentSoft: 'rgba(20, 184, 166, 0.12)',
 
   success: palette.emerald,
   warning: palette.amber,
   danger: palette.rose,
   info: palette.blue,
 
-  overlay: 'rgba(4, 8, 16, 0.72)',
+  incomeColor: palette.emerald,
+  expenseColor: palette.coral,
+  transferColor: palette.violet,
+  savingsColor: palette.cyan,
+
+  overlay: 'rgba(2, 6, 20, 0.64)',
   shadow: '#02060f',
-  chartGrid: 'rgba(148, 163, 184, 0.12)',
-  tabBar: 'rgba(11, 17, 32, 0.96)',
-  tabBarBorder: 'rgba(148, 163, 184, 0.1)',
-  inputBackground: '#101a2c',
-  skeleton: '#182238',
-  heroGradient: ['#0d1b3e', '#14306b', '#1b56a5'],
-  chipTint: 'rgba(148, 163, 184, 0.12)',
+  chartGrid: 'rgba(148, 163, 184, 0.1)',
+  tabBar: 'rgba(10, 14, 39, 0.94)',
+  tabBarBorder: 'rgba(229, 231, 235, 0.08)',
+  inputBackground: '#141b3d',
+  skeleton: '#1a2344',
+  heroGradient: ['#0c1a38', '#0e3348', '#11605c'],
+  chipTint: 'rgba(229, 231, 235, 0.07)',
 };
 
 export const lightThemeColors: ThemeColors = {
-  background: '#f6f8fb',
-  backgroundAlt: palette.ink50,
+  background: '#f3f6fb',
+  backgroundAlt: palette.white,
   card: palette.white,
-  cardAlt: '#f2f5f9',
-  surfaceSunken: '#eef2f7',
+  cardAlt: '#f1f5f9',
+  surfaceSunken: '#e8edf5',
   border: 'rgba(15, 23, 42, 0.08)',
   borderStrong: 'rgba(15, 23, 42, 0.16)',
 
-  text: '#0d1526',
-  textMedium: '#3c4a60',
-  textMuted: '#68758a',
-  textFaint: '#94a1b5',
+  text: '#0e1630',
+  textMedium: '#3f4d66',
+  textMuted: '#68758c',
+  textFaint: '#94a1b8',
   textInverse: palette.white,
 
-  primary: '#1668d6',
-  primaryDeep: palette.navy,
-  primaryBright: palette.blue,
+  primary: palette.tealDeep,
+  primaryDeep: '#0f766e',
+  primaryBright: palette.teal,
   onPrimary: palette.white,
-  accentSoft: 'rgba(14, 165, 233, 0.12)',
+  accentSoft: 'rgba(13, 148, 136, 0.1)',
 
   success: palette.emeraldDeep,
   warning: palette.amberDeep,
-  danger: '#dc2626',
-  info: '#1668d6',
+  danger: palette.roseDeep,
+  info: '#2563eb',
 
-  overlay: 'rgba(15, 23, 42, 0.42)',
+  incomeColor: palette.emeraldDeep,
+  expenseColor: palette.roseDeep,
+  transferColor: '#7c3aed',
+  savingsColor: '#0891b2',
+
+  overlay: 'rgba(15, 23, 42, 0.45)',
   shadow: '#0f172a',
   chartGrid: 'rgba(15, 23, 42, 0.08)',
   tabBar: 'rgba(255, 255, 255, 0.97)',
   tabBarBorder: 'rgba(15, 23, 42, 0.08)',
   inputBackground: palette.white,
-  skeleton: '#e6ecf4',
-  heroGradient: ['#122150', '#1e3a8a', '#1668d6'],
+  skeleton: '#e4eaf3',
+  heroGradient: ['#134e4a', '#0f766e', palette.teal],
   chipTint: 'rgba(15, 23, 42, 0.05)',
 };

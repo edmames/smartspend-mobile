@@ -47,9 +47,10 @@ export function AppModal({
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Scale 0.9 → 1 + fade on enter, 150ms out — snappy, never floaty.
     Animated.parallel([
       Animated.timing(opacity, { toValue: visible ? 1 : 0, duration: visible ? 180 : 140, useNativeDriver: true }),
-      Animated.spring(scale, { toValue: visible ? 1 : 0.96, useNativeDriver: true, friction: 8, tension: 90 }),
+      Animated.spring(scale, { toValue: visible ? 1 : 0.9, useNativeDriver: true, friction: 9, tension: 170 }),
     ]).start();
   }, [opacity, scale, visible]);
 

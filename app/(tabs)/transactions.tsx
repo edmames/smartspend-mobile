@@ -225,7 +225,7 @@ export default function TransactionsScreen() {
               <View style={styles.totalsRow}>
                 <View style={{ flex: 1, minWidth: 0 }}>
                   <View style={styles.totalsLabel}>
-                    <View style={[styles.dotSmall, { backgroundColor: theme.colors.success }]} />
+                    <View style={[styles.dotSmall, { backgroundColor: theme.colors.incomeColor }]} />
                     <AppText variant="caption" tone="muted">
                       {t('report.in')}
                     </AppText>
@@ -235,7 +235,7 @@ export default function TransactionsScreen() {
 
                 <View style={{ flex: 1, minWidth: 0 }}>
                   <View style={styles.totalsLabel}>
-                    <View style={[styles.dotSmall, { backgroundColor: theme.colors.danger }]} />
+                    <View style={[styles.dotSmall, { backgroundColor: theme.colors.expenseColor }]} />
                     <AppText variant="caption" tone="muted">
                       {t('report.out')}
                     </AppText>

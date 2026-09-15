@@ -1,6 +1,7 @@
 /**
- * Chip / Badge — filter pills and status badges. Borderless by design: chips
- * are tonal fills, which keeps filter rows calm when many are present.
+ * Chip / Badge — filter pills and status badges. Selected chips are solid
+ * accent fills (high contrast on dark); idle chips are tonal fills with a
+ * hairline edge so filter rows stay calm when many are present.
  */
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
@@ -58,6 +59,8 @@ export function Chip({
           backgroundColor: selected ? accent : theme.colors.chipTint,
           borderRadius: theme.radius.pill,
           paddingHorizontal: size === 'sm' ? 12 : 14,
+          borderWidth: selected ? 0 : 1,
+          borderColor: theme.colors.border,
           opacity: disabled ? theme.opacity.disabled : 1,
         },
         press.style,

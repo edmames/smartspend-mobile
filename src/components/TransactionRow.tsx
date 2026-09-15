@@ -66,8 +66,13 @@ export function TransactionRow({
 
   const categoryMeta = CATEGORY_META[transaction.category] ?? CATEGORY_META.other;
   const direction = directionOf(transaction.type);
+  // Ledger-direction colours: income green, coral expense — not alarm red.
   const amountColor =
-    direction === 'in' ? theme.colors.success : direction === 'out' ? theme.colors.danger : theme.colors.text;
+    direction === 'in'
+      ? theme.colors.incomeColor
+      : direction === 'out'
+        ? theme.colors.expenseColor
+        : theme.colors.transferColor;
 
   const title = transaction.description.trim()
     ? transaction.description.trim()

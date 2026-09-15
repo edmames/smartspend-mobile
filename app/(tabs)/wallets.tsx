@@ -97,7 +97,7 @@ export default function WalletsScreen() {
                 height: '100%',
               }}
             />
-            <View style={{ flex: savingsTotal > 0 ? savingsTotal : 0.001, backgroundColor: theme.colors.success, height: '100%' }} />
+            <View style={{ flex: savingsTotal > 0 ? savingsTotal : 0.001, backgroundColor: theme.colors.savingsColor, height: '100%' }} />
           </View>
 
           <View style={[styles.legendRow, { marginTop: theme.spacing.sm }]}>
@@ -108,7 +108,7 @@ export default function WalletsScreen() {
               </AppText>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: theme.colors.success }]} />
+              <View style={[styles.dot, { backgroundColor: theme.colors.savingsColor }]} />
               <AppText variant="caption" tone="muted">
                 {`${t('dashboard.savings_total')} · ${formatCurrency(savingsTotal)}`}
               </AppText>

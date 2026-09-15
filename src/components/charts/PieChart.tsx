@@ -92,7 +92,7 @@ export function PieChart({
                     stroke={arc.color}
                     strokeWidth={thickness}
                     fill="none"
-                    strokeLinecap="butt"
+                    strokeLinecap="round"
                   />
                 );
               })

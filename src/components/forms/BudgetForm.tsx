@@ -92,7 +92,7 @@ export function BudgetForm({
 
   return (
     <View>
-      <View style={[styles.monthRow, { backgroundColor: theme.colors.cardAlt, borderRadius: theme.radius.md }]}>
+      <View style={[styles.monthRow, { backgroundColor: theme.colors.surfaceSunken, borderRadius: theme.radius.md }]}>
         <Icon name="calendar-outline" size={16} color={theme.colors.textMuted} />
         <AppText variant="small" tone="medium" style={{ marginLeft: 8 }}>
           {formatMonthYear(monthYear, language)}

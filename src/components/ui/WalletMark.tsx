@@ -20,9 +20,9 @@ export type { WalletBrand };
 
 /** Deep tones for the solid variant / glyph on tint. */
 const TYPE_INK: Record<WalletType, { accent: string; deep: string }> = {
-  cash: { accent: '#0f9d76', deep: '#0b6b52' },
-  bank: { accent: '#2563eb', deep: '#1e3a8a' },
-  ewallet: { accent: '#7c3aed', deep: '#5b21b6' },
+  cash: { accent: '#10b981', deep: '#065f46' },
+  bank: { accent: '#3b82f6', deep: '#1e3a8a' },
+  ewallet: { accent: '#8b5cf6', deep: '#5b21b6' },
 };
 
 const MARK_PROPS = {
@@ -95,7 +95,8 @@ export function WalletMark({ type, brand, size = 40, variant = 'tint', style }: 
  * Same tile geometry, so goals read as part of the same family.
  */
 export function SavingsMark({ size = 38, style }: { size?: number; style?: StyleProp<ViewStyle> }) {
-  const accent = '#0ea5e9';
+  // Cyan — matches the semantic `savingsColor` token.
+  const accent = '#06b6d4';
   return (
     <View style={style}>
       <Svg width={size} height={size} viewBox="0 0 48 48">

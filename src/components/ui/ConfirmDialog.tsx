@@ -1,5 +1,8 @@
 /**
  * Confirmation dialog for destructive actions.
+ *
+ * Center modal, tinted icon chip, H3-style headline and a two-button footer
+ * with the destructive action in red on the right (platform convention).
  */
 import { View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
@@ -42,16 +45,16 @@ export function ConfirmDialog({
       <View style={{ alignItems: 'center' }}>
         <View
           style={{
-            width: 40,
-            height: 40,
-            borderRadius: 14,
+            width: 44,
+            height: 44,
+            borderRadius: 15,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: `${accent}1f`,
             marginBottom: theme.spacing.md,
           }}
         >
-          <Icon name={destructive ? 'alert-circle-outline' : 'information-circle-outline'} size={20} color={accent} />
+          <Icon name={destructive ? 'alert-circle-outline' : 'information-circle-outline'} size={22} color={accent} />
         </View>
 
         <AppText variant="subtitle" align="center">

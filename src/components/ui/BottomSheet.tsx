@@ -56,18 +56,27 @@ export function BottomSheet({
       return;
     }
 
+    // Spring-bounce entrance: cubic-bezier(0.34, 1.56, 0.64, 1) feel via a
+    // soft spring with a slight overshoot; exit stays a quick eased slide.
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: visible ? 1 : 0,
         duration: visible ? 200 : 150,
         useNativeDriver: true,
       }),
-      Animated.timing(translateY, {
-        toValue: visible ? 0 : screenHeight,
-        duration: visible ? 320 : 220,
-        easing: visible ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }),
+      visible
+        ? Animated.spring(translateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            friction: 9,
+            tension: 130,
+          })
+        : Animated.timing(translateY, {
+            toValue: screenHeight,
+            duration: 200,
+            easing: Easing.in(Easing.cubic),
+            useNativeDriver: true,
+          }),
     ]).start();
   }, [opacity, reduced, screenHeight, translateY, visible]);
 

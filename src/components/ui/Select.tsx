@@ -76,7 +76,7 @@ export function Select<T extends string = string>({
             backgroundColor: theme.colors.inputBackground,
             borderColor: error ? theme.colors.danger : theme.colors.border,
             borderRadius: theme.radius.md,
-            paddingHorizontal: theme.spacing.md,
+            paddingHorizontal: theme.spacing.lg,
             opacity: disabled ? theme.opacity.disabled : pressed ? theme.opacity.pressed : 1,
           },
         ]}
@@ -145,11 +145,15 @@ export function Select<T extends string = string>({
                   style={({ pressed }) => [
                     styles.option,
                     {
-                      backgroundColor: isSelected ? theme.colors.accentSoft : 'transparent',
+                      backgroundColor: isSelected
+                        ? theme.colors.accentSoft
+                        : pressed
+                          ? theme.colors.chipTint
+                          : 'transparent',
                       borderRadius: theme.radius.md,
                       paddingVertical: theme.spacing.md,
                       paddingHorizontal: theme.spacing.md,
-                      opacity: pressed ? theme.opacity.pressed : 1,
+                      opacity: pressed && !isSelected ? theme.opacity.pressed : 1,
                     },
                   ]}
                 >

@@ -32,7 +32,7 @@ export interface MoneyProps {
 }
 
 const SIZE_SCALE: Record<MoneySize, { main: number; prefix: number; defaultWeight: TextStyle['fontWeight'] }> = {
-  hero: { main: 38, prefix: 19, defaultWeight: '700' },
+  hero: { main: 40, prefix: 20, defaultWeight: '700' },
   money: { main: 30, prefix: 16, defaultWeight: '700' },
   title: { main: 22, prefix: 12, defaultWeight: '700' },
   subtitle: { main: 17, prefix: 11, defaultWeight: '600' },

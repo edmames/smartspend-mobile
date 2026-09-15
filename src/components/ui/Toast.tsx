@@ -97,6 +97,9 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: () =>
   const meta = TOAST_META[toast.kind];
   const accent = theme.colors[meta.tone];
 
+  /** Solid status surface with a matching hairline — high contrast on dark. */
+  const pillBackground = theme.dark ? theme.colors.cardAlt : theme.colors.card;
+
   useEffect(() => {
     if (!reduced) {
       Animated.parallel([
@@ -124,9 +127,9 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: () =>
           styles.toast,
           theme.elevation.floating,
           {
-            backgroundColor: theme.colors.cardAlt,
-            borderColor: theme.colors.border,
-            borderRadius: theme.radius.md,
+            backgroundColor: pillBackground,
+            borderColor: theme.colors.borderStrong,
+            borderRadius: theme.radius.pill,
           },
         ]}
       >
@@ -169,8 +172,8 @@ const styles = StyleSheet.create({
   toast: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 11,
-    paddingHorizontal: 12,
+    paddingVertical: 9,
+    paddingHorizontal: 14,
     borderWidth: 1,
   },
 });

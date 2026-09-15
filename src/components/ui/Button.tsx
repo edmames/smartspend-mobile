@@ -3,11 +3,10 @@
  *
  * Filled variants get a 1px inner highlight along the top edge, which is what
  * makes a flat rectangle read as a physical key. Press feedback is a spring
- * scale rather than an opacity dip.
+ * scale plus a selection haptic; the pressed fill dips to the deep teal.
  */
 import { ActivityIndicator, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { palette } from '../../styles/colors';
 import { AppText } from './AppText';
 import { Icon, type IconName } from './Icon';
 import { haptics } from '../../utils/haptics';
@@ -48,7 +47,7 @@ export function Button({
   const theme = useTheme();
   const { colors, radius, spacing } = theme;
   const isDisabled = disabled || loading;
-  const press = usePressScale(0.97);
+  const press = usePressScale(0.95);
 
   const filled = variant === 'primary' || variant === 'danger' || variant === 'success';
 
@@ -56,18 +55,28 @@ export function Button({
     primary: colors.primary,
     secondary: colors.cardAlt,
     ghost: 'transparent',
-    danger: theme.dark ? palette.rose : '#dc2626',
-    success: theme.dark ? palette.emerald : '#059669',
+    danger: colors.danger,
+    success: colors.success,
     outline: 'transparent',
+  };
+
+  /** Fill while the finger is down — primary sinks to teal-deep. */
+  const pressedBackgrounds: Record<ButtonVariant, string> = {
+    primary: colors.primaryDeep,
+    secondary: colors.surfaceSunken,
+    ghost: colors.chipTint,
+    danger: theme.dark ? '#dc2626' : '#b91c1c',
+    success: theme.dark ? '#059669' : '#047857',
+    outline: colors.chipTint,
   };
 
   const textColors: Record<ButtonVariant, string> = {
     primary: colors.onPrimary,
     secondary: colors.text,
     ghost: colors.textMedium,
-    danger: theme.dark ? palette.ink900 : '#ffffff',
-    success: theme.dark ? palette.ink900 : '#ffffff',
-    outline: colors.text,
+    danger: '#ffffff',
+    success: '#ffffff',
+    outline: colors.primary,
   };
 
   const heights: Record<ButtonSize, number> = { sm: 34, md: 44, lg: 52 };
@@ -89,15 +98,15 @@ export function Button({
       onPressIn={press.handlers.onPressIn}
       onPressOut={press.handlers.onPressOut}
       disabled={isDisabled}
-      style={[
+      style={({ pressed }) => [
         styles.base,
         {
-          backgroundColor: backgrounds[variant],
+          backgroundColor: pressed && !isDisabled ? pressedBackgrounds[variant] : backgrounds[variant],
           borderRadius: radius.md,
           minHeight: heights[size],
           paddingHorizontal: paddings[size],
           borderWidth: variant === 'outline' ? 1 : 0,
-          borderColor: variant === 'outline' ? colors.borderStrong : undefined,
+          borderColor: variant === 'outline' ? colors.primary : undefined,
           opacity: isDisabled ? theme.opacity.disabled : 1,
           width: fullWidth ? '100%' : undefined,
         },

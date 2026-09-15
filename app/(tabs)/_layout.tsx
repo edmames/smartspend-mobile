@@ -1,9 +1,9 @@
 /**
  * Bottom tab navigation: Home · Transactions · Wallets · Savings · Reports · Settings.
  *
- * The bar uses a translucent surface with a hairline top edge; the active tab is
- * marked by a small pill indicator plus colour, so state is readable without
- * relying on colour alone.
+ * The bar uses a translucent indigo surface with a hairline top edge; the
+ * active tab is marked by a small teal pill indicator plus colour, so state is
+ * readable without relying on colour alone.
  */
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View } from 'react-native';
@@ -38,7 +38,7 @@ export default function TabsLayout() {
       screenListeners={{ tabPress: () => haptics.selection() }}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
+        tabBarActiveTintColor: theme.colors.primaryBright,
         tabBarInactiveTintColor: theme.colors.textFaint,
         tabBarStyle: {
           backgroundColor: theme.colors.tabBar,
@@ -47,7 +47,7 @@ export default function TabsLayout() {
           height: barHeight,
           paddingTop: 8,
           paddingBottom: bottomInset,
-          elevation: 0,
+          elevation: 8,
         },
         tabBarLabelStyle: {
           fontSize: 10,

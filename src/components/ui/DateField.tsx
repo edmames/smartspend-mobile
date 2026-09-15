@@ -77,16 +77,16 @@ export function DateField({
             backgroundColor: theme.colors.inputBackground,
             borderColor: error ? theme.colors.danger : theme.colors.border,
             borderRadius: theme.radius.md,
-            paddingHorizontal: theme.spacing.md,
+            paddingHorizontal: theme.spacing.lg,
             opacity: disabled ? theme.opacity.disabled : pressed ? theme.opacity.pressed : 1,
           },
         ]}
       >
-        <Icon name="calendar-outline" size={18} color={theme.colors.textMuted} style={{ marginRight: 10 }} />
+        <Icon name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 10 }} />
         <AppText variant="bodyLarge" style={{ flex: 1 }}>
           {value ? formatDateLong(value, language) : '—'}
         </AppText>
-        <Icon name="chevron-down" size={18} color={theme.colors.textMuted} />
+        <Icon name="chevron-down" size={18} color={theme.colors.textFaint} />
       </Pressable>
 
       {error ? (
@@ -151,15 +151,14 @@ export function CalendarSheet({
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title={title} maxHeightRatio={0.72}>
-      <View style={styles.calendarHeader}>
-        <Pressable
-          onPress={() => setCursor((current) => addMonthsToYearMonth(current, -1))}
-          disabled={cursorIsMin}
-          hitSlop={10}
-          style={[styles.arrow, { opacity: cursorIsMin ? theme.opacity.disabled : 1 }]}
-        >
-          <Icon name="chevron-back" size={20} color={theme.colors.text} />
-        </Pressable>
+      <View style={styles.calendarHeader}>          <Pressable
+            onPress={() => setCursor((current) => addMonthsToYearMonth(current, -1))}
+            disabled={cursorIsMin}
+            hitSlop={10}
+            style={[styles.arrow, { backgroundColor: cursorIsMin ? 'transparent' : theme.colors.chipTint, opacity: cursorIsMin ? theme.opacity.disabled : 1 }]}
+          >
+            <Icon name="chevron-back" size={20} color={theme.colors.text} />
+          </Pressable>
         <AppText variant="bodyLarge" weight="semibold">
           {formatMonthYear(cursor, language)}
         </AppText>
@@ -167,7 +166,7 @@ export function CalendarSheet({
           onPress={() => setCursor((current) => addMonthsToYearMonth(current, 1))}
           disabled={cursorIsMax}
           hitSlop={10}
-          style={[styles.arrow, { opacity: cursorIsMax ? theme.opacity.disabled : 1 }]}
+          style={[styles.arrow, { backgroundColor: cursorIsMax ? 'transparent' : theme.colors.chipTint, opacity: cursorIsMax ? theme.opacity.disabled : 1 }]}
         >
           <Icon name="chevron-forward" size={20} color={theme.colors.text} />
         </Pressable>
@@ -208,7 +207,7 @@ export function CalendarSheet({
                   borderRadius: 19,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: selected ? theme.colors.primary : 'transparent',
+                  backgroundColor: selected ? theme.colors.primary : isToday ? theme.colors.accentSoft : 'transparent',
                   borderWidth: isToday && !selected ? 1 : 0,
                   borderColor: theme.colors.primary,
                   opacity: disabled ? 0.3 : 1,
@@ -245,7 +244,7 @@ const styles = StyleSheet.create({
   field: {
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 50,
+    minHeight: 52,
     borderWidth: 1,
   },
   messageRow: {
@@ -262,6 +261,7 @@ const styles = StyleSheet.create({
   arrow: {
     width: 40,
     height: 38,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },

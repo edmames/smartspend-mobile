@@ -30,7 +30,7 @@ export function SavingsCard({ progress, onPress, onLongPress }: SavingsCardProps
     ? theme.colors.success
     : isOverdue
       ? theme.colors.danger
-      : theme.colors.primary;
+      : theme.colors.savingsColor;
 
   return (
     <Card onPress={onPress} onLongPress={onLongPress} style={{ marginBottom: theme.spacing.sm }}>

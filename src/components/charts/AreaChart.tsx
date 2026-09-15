@@ -159,7 +159,7 @@ export function AreaChart({
                   y1={PADDING.top}
                   x2={xFor(activeIndex)}
                   y2={PADDING.top + chartHeight}
-                  stroke={theme.colors.borderStrong}
+                  stroke={theme.colors.primaryBright}
                   strokeWidth={1}
                 />
                 {series.map((item) => (
@@ -167,8 +167,8 @@ export function AreaChart({
                     key={`marker_${item.label}`}
                     cx={xFor(activeIndex)}
                     cy={yFor(item.values[activeIndex] ?? 0)}
-                    r={3.5}
-                    fill={theme.colors.card}
+                    r={4}
+                    fill={theme.colors.background}
                     stroke={item.color}
                     strokeWidth={2}
                   />
@@ -245,9 +245,13 @@ export function AreaChart({
   );
 }
 
-/** Default series colours (semantic, not decorative). */
-export const INCOME_COLOR = '#34d399';
-export const EXPENSE_COLOR = '#fb7185';
+/** Default series colours (semantic, not decorative — ledger direction). */
+export const INCOME_COLOR = '#10b981';
+export const EXPENSE_COLOR = '#f87171';
+/** Transfer / neutral series (purple, matches the semantic transfer token). */
+export const TRANSFER_COLOR = '#8b5cf6';
+/** Secondary/other series (cyan, matches the savings token). */
+export const SAVINGS_COLOR = '#06b6d4';
 
 const styles = StyleSheet.create({
   legend: {

@@ -69,8 +69,10 @@ export function Card({
       : {
           backgroundColor: resolved === 'inset' ? colors.cardAlt : colors.card,
           borderRadius: resolved === 'raised' ? radius.lg : radius.lg,
+          // Hairline edge on every card: on the dark indigo base a 10% white
+          // outline is what separates a card from the background.
           borderWidth: 1,
-          borderColor: resolved === 'raised' ? colors.border : 'transparent',
+          borderColor: colors.border,
         },
     resolved === 'raised' ? theme.elevation.floating : null,
     padded && resolved !== 'bare' ? { padding: spacing.card } : null,
@@ -104,7 +106,9 @@ export function Card({
       style={({ pressed }) => [
         surface,
         press.style,
-        pressed && resolved !== 'bare' ? { backgroundColor: colors.cardAlt } : null,
+        pressed && resolved !== 'bare'
+          ? { backgroundColor: resolved === 'inset' ? colors.surfaceSunken : colors.cardAlt }
+          : null,
       ]}
     >
       {children}
@@ -171,22 +175,20 @@ export function SectionHeader({ title, actionLabel, onAction, icon, count, style
 
 /**
  * HeroCard — the total-money panel.
- * Deliberately restrained: a deep navy gradient, a single hairline highlight at
- * the top edge, and a rule separating the figure from its breakdown. No
- * decorative blobs.
+ * Deliberately restrained: a deep teal-over-indigo ramp, a single hairline
+ * highlight at the top edge, and a rule separating the figure from its
+ * breakdown. No decorative blobs.
  */
 export interface HeroCardProps {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
-  /** Overrides the default navy ramp (e.g. income / expense detail panels). */
+  /** Overrides the default teal ramp (e.g. income / expense detail panels). */
   gradient?: readonly [string, string, ...string[]];
 }
 
 export function HeroCard({ children, style, gradient: override }: HeroCardProps) {
   const theme = useTheme();
-  const gradient =
-    override ??
-    (theme.dark ? (['#0e1c3d', '#16346e', '#1b56a5'] as const) : (['#122150', '#1e3a8a', '#1668d6'] as const));
+  const gradient = override ?? theme.colors.heroGradient;
 
   return (
     <View

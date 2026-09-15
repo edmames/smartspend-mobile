@@ -66,19 +66,22 @@ export function Input({
             backgroundColor: colors.inputBackground,
             borderRadius: radius.md,
             borderColor,
-            // Width stays constant on focus so the field never nudges.
+            // Hairline at rest; the focus ring is a tinted underlay instead of a
+            // thicker border, so the field never nudges or reflows on focus.
             borderWidth: 1,
-            paddingHorizontal: spacing.md,
+            paddingHorizontal: spacing.lg,
             opacity: editable ? 1 : theme.opacity.disabled,
           },
+          focused ? styles.focusRing : null,
+          focused && error ? { backgroundColor: `${colors.danger}0d` } : null,
         ]}
       >
         {leftIcon ? (
-          <Icon name={leftIcon} size={18} color={focused ? colors.primary : colors.textMuted} style={{ marginRight: spacing.sm }} />
+          <Icon name={leftIcon} size={18} color={focused ? colors.primary : colors.textFaint} style={{ marginRight: spacing.sm }} />
         ) : null}
 
         {prefix ? (
-          <AppText variant="body" tone="muted" style={{ marginRight: 6 }}>
+          <AppText variant="body" weight="semibold" tone="muted" style={{ marginRight: 6 }}>
             {prefix}
           </AppText>
         ) : null}
@@ -95,7 +98,7 @@ export function Input({
             setFocused(false);
             rest.onBlur?.(event);
           }}
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={colors.textFaint}
           selectionColor={colors.primary}
           style={[
             styles.input,
@@ -141,11 +144,19 @@ const styles = StyleSheet.create({
   field: {
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 50,
+    minHeight: 52,
+  },
+  focusRing: {
+    backgroundColor: 'rgba(20, 184, 166, 0.07)',
+    shadowColor: '#14b8a6',
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 2,
   },
   input: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 11,
   },
   messageRow: {
     flexDirection: 'row',

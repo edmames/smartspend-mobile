@@ -52,12 +52,12 @@ export default function LoginScreen() {
               style={[
                 styles.logo,
                 {
-                  backgroundColor: theme.colors.heroGradient[1],
+                  backgroundColor: theme.colors.primary,
                   borderRadius: 18,
                 },
               ]}
             >
-              <Icon name="shield-checkmark" size={26} color="#ffffff" />
+              <Icon name="shield-checkmark" size={26} color={theme.colors.onPrimary} />
             </View>
             <AppText variant="title" style={{ marginTop: theme.spacing.lg }}>
               {APP_NAME}
@@ -71,11 +71,13 @@ export default function LoginScreen() {
             style={[
               styles.card,
               {
-                // Borderless surface: one flat panel separated by rhythm, not outline.
+                // One elevated panel with a hairline edge — flat but layered.
                 backgroundColor: theme.colors.card,
                 borderRadius: theme.radius.xl,
                 padding: theme.spacing.xl,
                 marginTop: theme.spacing.xl,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
               },
             ]}
           >

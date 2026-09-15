@@ -4,6 +4,7 @@
  * Keeps the raw digits in state and renders them with thousand separators, so
  * decimals, letters and scientific notation can never be typed in the first
  * place. `parseAmountInput` still validates on submit (defence in depth).
+ * The field is display-sized with a muted Rp prefix — the hero of the form.
  */
 import { Input, type InputProps } from './Input';
 import { extractDigits, groupDigits, parseAmountInput } from '../../utils/formatting';

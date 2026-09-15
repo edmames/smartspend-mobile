@@ -1,5 +1,9 @@
 /**
  * Money display: right color and sign for every ledger direction.
+ *
+ * Direction colours come from the semantic ledger tokens (income green,
+ * coral expense) rather than the alarm-red danger colour, so a ledger column
+ * reads calm while still encoding meaning.
  */
 import { AppText, type AppTextProps } from './ui/AppText';
 import { useTheme } from '../hooks/useTheme';
@@ -27,7 +31,11 @@ export function AmountText({
   const resolved = direction ?? (type ? directionOf(type) : 'neutral');
 
   const color =
-    resolved === 'in' ? theme.colors.success : resolved === 'out' ? theme.colors.danger : theme.colors.text;
+    resolved === 'in'
+      ? theme.colors.incomeColor
+      : resolved === 'out'
+        ? theme.colors.expenseColor
+        : theme.colors.text;
 
   const text = showSign ? formatSignedCurrency(value, resolved) : formatCurrency(value);
 

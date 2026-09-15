@@ -71,7 +71,7 @@ export function MonthNavigator({
             { opacity: atMin ? theme.opacity.disabled : pressed ? theme.opacity.pressed : 1 },
           ]}
         >
-          <Icon name="chevron-back" size={20} color={theme.colors.text} />
+          <Icon name="chevron-back" size={20} color={theme.colors.primary} />
         </Pressable>
 
         <Pressable
@@ -86,7 +86,7 @@ export function MonthNavigator({
           <AppText variant="bodyLarge" weight="semibold">
             {formatMonthYear(value, language)}
           </AppText>
-          {!pickerDisabled ? <Icon name="calendar-outline" size={15} color={theme.colors.textMuted} style={{ marginLeft: 8 }} /> : null}
+          {!pickerDisabled ? <Icon name="calendar-outline" size={15} color={theme.colors.primary} style={{ marginLeft: 8 }} /> : null}
         </Pressable>
 
         <Pressable
@@ -100,7 +100,7 @@ export function MonthNavigator({
             { opacity: atMax ? theme.opacity.disabled : pressed ? theme.opacity.pressed : 1 },
           ]}
         >
-          <Icon name="chevron-forward" size={20} color={theme.colors.text} />
+          <Icon name="chevron-forward" size={20} color={theme.colors.primary} />
         </Pressable>
       </View>
 
@@ -171,8 +171,7 @@ export function MonthPickerSheet({
           const disabled = monthYear > maxMonth || (minMonth ? monthYear < minMonth : false);
           const selected = year === selectedYear && month === selectedMonth;
 
-          return (
-            <Pressable
+          return (              <Pressable
               key={monthYear}
               disabled={disabled}
               onPress={() => {

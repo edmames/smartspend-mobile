@@ -282,7 +282,7 @@ export function TransactionForm({
         <View
           style={[
             styles.tabs,
-            { backgroundColor: theme.colors.backgroundAlt, borderRadius: theme.radius.md, marginBottom: theme.spacing.md },
+            { backgroundColor: theme.colors.surfaceSunken, borderRadius: theme.radius.md, marginBottom: theme.spacing.md },
           ]}
         >
           {QUICK_TRANSACTION_TYPES.map((value) => {
@@ -301,7 +301,9 @@ export function TransactionForm({
                   styles.tab,
                   {
                     backgroundColor: selected ? theme.colors.card : 'transparent',
-                    opacity: pressed ? 0.85 : 1,
+                    borderWidth: 1,
+                    borderColor: selected ? theme.colors.border : 'transparent',
+                    opacity: pressed ? 0.88 : 1,
                   },
                 ]}
               >
@@ -332,7 +334,7 @@ export function TransactionForm({
         style={[
           styles.amountBlock,
           {
-            backgroundColor: theme.colors.backgroundAlt,
+            backgroundColor: theme.colors.surfaceSunken,
             borderRadius: theme.radius.md,
             borderColor: errors.amount ? theme.colors.danger : theme.colors.border,
           },
@@ -463,8 +465,8 @@ export function TransactionForm({
                   style={({ pressed }) => [
                     styles.chip,
                     {
-                      backgroundColor: selected ? theme.colors.chipTint : theme.colors.backgroundAlt,
-                      borderColor: selected ? theme.colors.borderStrong : theme.colors.border,
+                      backgroundColor: selected ? theme.colors.accentSoft : theme.colors.cardAlt,
+                      borderColor: selected ? theme.colors.primary : theme.colors.border,
                       opacity: pressed ? 0.85 : 1,
                     },
                   ]}
@@ -535,12 +537,11 @@ export function TransactionForm({
                       setPaymentMethod(method);
                     }}
                     accessibilityRole="radio"
-                    accessibilityState={{ selected }}
-                    style={({ pressed }) => [
+                    accessibilityState={{ selected }}                      style={({ pressed }) => [
                       styles.miniChip,
                       {
-                        backgroundColor: selected ? theme.colors.chipTint : theme.colors.backgroundAlt,
-                        borderColor: selected ? theme.colors.borderStrong : theme.colors.border,
+                        backgroundColor: selected ? theme.colors.accentSoft : theme.colors.cardAlt,
+                        borderColor: selected ? theme.colors.primary : theme.colors.border,
                         opacity: pressed ? 0.85 : 1,
                       },
                     ]}
@@ -689,8 +690,8 @@ function WalletChips({
               style={({ pressed }) => [
                 styles.chip,
                 {
-                  backgroundColor: selected ? theme.colors.chipTint : theme.colors.backgroundAlt,
-                  borderColor: selected ? theme.colors.borderStrong : theme.colors.border,
+                  backgroundColor: selected ? theme.colors.accentSoft : theme.colors.cardAlt,
+                  borderColor: selected ? theme.colors.primary : theme.colors.border,
                   opacity: disabled ? 0.4 : pressed ? 0.85 : 1,
                 },
               ]}

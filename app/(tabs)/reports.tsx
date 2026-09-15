@@ -133,7 +133,7 @@ export default function ReportsScreen() {
           <View style={styles.ioRow}>
             <View style={{ flex: 1, minWidth: 0 }}>
               <View style={styles.ioLabel}>
-                <View style={[styles.dot, { backgroundColor: theme.colors.success }]} />
+                <View style={[styles.dot, { backgroundColor: theme.colors.incomeColor }]} />
                 <AppText variant="caption" tone="muted">
                   {t('dashboard.income')}
                 </AppText>
@@ -142,7 +142,7 @@ export default function ReportsScreen() {
             </View>
             <View style={{ flex: 1, minWidth: 0 }}>
               <View style={styles.ioLabel}>
-                <View style={[styles.dot, { backgroundColor: theme.colors.danger }]} />
+                <View style={[styles.dot, { backgroundColor: theme.colors.expenseColor }]} />
                 <AppText variant="caption" tone="muted">
                   {t('dashboard.expense')}
                 </AppText>
@@ -237,17 +237,17 @@ export default function ReportsScreen() {
                       {formatWeekdayShort(day.date, language)}
                     </AppText>
                   </View>
-                  <AppText variant="caption" tabular color={theme.colors.success} style={{ flex: 1, textAlign: 'right' }}>
+                  <AppText variant="caption" tabular color={theme.colors.incomeColor} style={{ flex: 1, textAlign: 'right' }}>
                     {day.income > 0 ? formatCurrency(day.income, { withSymbol: false }) : '—'}
                   </AppText>
-                  <AppText variant="caption" tabular color={theme.colors.danger} style={{ flex: 1, textAlign: 'right' }}>
+                  <AppText variant="caption" tabular color={theme.colors.expenseColor} style={{ flex: 1, textAlign: 'right' }}>
                     {day.expense > 0 ? formatCurrency(day.expense, { withSymbol: false }) : '—'}
                   </AppText>
                   <AppText
                     variant="caption"
                     weight="medium"
                     tabular
-                    color={day.cumulativeNet >= 0 ? theme.colors.success : theme.colors.danger}
+                    color={day.cumulativeNet >= 0 ? theme.colors.incomeColor : theme.colors.expenseColor}
                     style={{ flex: 1.2, textAlign: 'right' }}
                   >
                     {formatCurrency(day.cumulativeNet, { withSymbol: false })}

@@ -19,14 +19,14 @@ export const spacing = {
   sm: 8,
   md: 12,
   lg: 16,
-  xl: 20,
-  xxl: 24,
-  xxxl: 32,
+  xl: 24,
+  xxl: 32,
+  xxxl: 40,
   huge: 48,
   /** Screen horizontal padding. */
   screen: 20,
   /** Card interior padding. */
-  card: 18,
+  card: 16,
 } as const;
 
 export const radius = {
@@ -54,14 +54,14 @@ export interface TypeStyle {
  */
 export const typeScale = {
   hero: { fontSize: 40, lineHeight: 44, fontWeight: '700', letterSpacing: -1.4 },
-  display: { fontSize: 30, lineHeight: 36, fontWeight: '700', letterSpacing: -0.9 },
-  title: { fontSize: 22, lineHeight: 28, fontWeight: '700', letterSpacing: -0.4 },
-  subtitle: { fontSize: 17, lineHeight: 24, fontWeight: '600', letterSpacing: -0.2 },
+  display: { fontSize: 32, lineHeight: 40, fontWeight: '700', letterSpacing: -0.5 },
+  title: { fontSize: 28, lineHeight: 34, fontWeight: '700', letterSpacing: -0.3 },
+  subtitle: { fontSize: 22, lineHeight: 28, fontWeight: '600', letterSpacing: -0.2 },
   bodyLarge: { fontSize: 16, lineHeight: 24, fontWeight: '400', letterSpacing: 0 },
-  body: { fontSize: 15, lineHeight: 22, fontWeight: '400', letterSpacing: 0 },
-  small: { fontSize: 13, lineHeight: 18, fontWeight: '400', letterSpacing: 0.1 },
+  body: { fontSize: 14, lineHeight: 22, fontWeight: '400', letterSpacing: 0.2 },
+  small: { fontSize: 13, lineHeight: 18, fontWeight: '400', letterSpacing: 0.2 },
   caption: { fontSize: 11.5, lineHeight: 15, fontWeight: '500', letterSpacing: 0.2 },
-  micro: { fontSize: 11, lineHeight: 14, fontWeight: '600', letterSpacing: 0.9 },
+  micro: { fontSize: 11, lineHeight: 14, fontWeight: '700', letterSpacing: 0.5 },
   money: { fontSize: 33, lineHeight: 38, fontWeight: '700', letterSpacing: -1.1 },
 } as const satisfies Record<string, TypeStyle>;
 
@@ -76,7 +76,7 @@ export const fontWeight = {
 } as const;
 
 export const opacity = {
-  disabled: 0.4,
+  disabled: 0.5,
   muted: 0.7,
   pressed: 0.92,
 } as const;
@@ -86,15 +86,15 @@ export const motion = {
   /** Micro feedback: press, toggle. */
   fast: 120,
   /** Standard transitions: fades, entrance. */
-  normal: 260,
+  normal: 220,
   /** Sheets, modals, hero number. */
-  slow: 340,
+  slow: 300,
   /** Count-up duration for money figures. */
   countUp: 720,
   /** Delay between staggered children. */
-  stagger: 55,
+  stagger: 50,
   /** Press scale factor. */
-  pressScale: 0.975,
+  pressScale: 0.95,
 } as const;
 
 /**
@@ -164,14 +164,14 @@ export function getTheme(mode: ResolvedThemeMode): Theme {
 
   const floating = buildElevation(
     dark
-      ? { shadowColor: palette.ink950, shadowOpacity: 0.6, shadowRadius: 28, elevation: 12 }
-      : { shadowColor: palette.ink900, shadowOpacity: 0.14, shadowRadius: 20, elevation: 6 },
+      ? { shadowColor: palette.night950, shadowOpacity: 0.6, shadowRadius: 28, elevation: 12 }
+      : { shadowColor: palette.night900, shadowOpacity: 0.14, shadowRadius: 20, elevation: 6 },
   );
 
   const sheet = buildElevation(
     dark
-      ? { shadowColor: palette.ink950, shadowOpacity: 0.7, shadowRadius: 40, shadowOffset: { width: 0, height: 18 }, elevation: 18 }
-      : { shadowColor: palette.ink900, shadowOpacity: 0.2, shadowRadius: 32, shadowOffset: { width: 0, height: 14 }, elevation: 12 },
+      ? { shadowColor: palette.night950, shadowOpacity: 0.7, shadowRadius: 40, shadowOffset: { width: 0, height: 18 }, elevation: 18 }
+      : { shadowColor: palette.night900, shadowOpacity: 0.2, shadowRadius: 32, shadowOffset: { width: 0, height: 14 }, elevation: 12 },
   );
 
   const flat: Elevation = Platform.OS === 'web'
