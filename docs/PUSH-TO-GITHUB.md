@@ -4,9 +4,13 @@ Repo git-nya **sudah siap** di `/home/user/smartspend-mobile`: branch `main`, 2 
 ter-track (tanpa `node_modules`, `.expo`, `dist`, dan tanpa `.env`).
 
 ```
+3987451  chore(repo): GitHub Pages demo, CI badge, changelog, templates
+9e51c36  docs: add GitHub push guide (bundle / remote / gh cli)
 441760e  ci: run strict typecheck, 171 logic checks and web export on push
 c10efb6  feat: SmartSpend — personal finance app (Expo + TypeScript)
 ```
+
+Branch: **`main`** · tag: **`v1.0.0`** (bundle & zip sudah memakai `main`).
 
 Ada dua paket yang bisa diunduh dari workspace:
 
@@ -31,11 +35,19 @@ Ada dua paket yang bisa diunduh dari workspace:
 ```bash
 git clone smartspend-mobile.bundle smartspend-mobile
 cd smartspend-mobile
+git branch -M main            # bundle memakai branch main; baris ini aman diulang
 git remote set-url origin https://github.com/<USERNAME>/smartspend-mobile.git
 git push -u origin main
 ```
 
-Ganti `<USERNAME>` dengan username GitHub Anda. Selesai — riwayat commit ikut terunggah.
+Ganti `<USERNAME>` dengan username GitHub Anda. Selesai — riwayat commit dan tag `v1.0.0` ikut terunggah.
+
+**Windows / PowerShell:** tulis URL tanpa tanda kurung siku atau markdown. Kalau ragu, apit dengan kutip:
+
+```powershell
+git remote set-url origin "https://github.com/<USERNAME>/smartspend-mobile.git"
+git push -u origin main
+```
 
 ---
 
@@ -76,6 +88,66 @@ Kalau Anda lebih suka memindahkan file satu-satu (drag & drop di web GitHub), un
 `smartspend-mobile-source.zip` **tanpa** `.git/`, `node_modules/`, `.expo/`, `dist/`, dan `.env`.
 Perhatikan: drag & drop tidak membawa riwayat commit, dan file `.github/` (workflow) harus
 di-commit lewat git supaya Actions jalan.
+
+---
+
+## Kalau push gagal — masalah yang paling sering muncul
+
+### `error: src refspec main does not match any`
+
+Artinya **repo lokal Anda tidak punya branch bernama `main`**. Dua penyebab:
+
+1. Branch lokal masih bernama `master` (default lama git, atau paket/kloning lama). Cek dulu:
+
+   ```powershell
+   git log --oneline      # ada commit? berarti ini penyebabnya
+   ```
+
+   Perbaikan:
+
+   ```powershell
+   git branch -M main     # ubah nama branch jadi main (histori tetap utuh)
+   git push -u origin main
+   ```
+
+2. Repo lokal belum punya commit sama sekali (`git log` bilang *"does not have any commits yet"*),
+   biasanya karena folder hanya berisi file hasil ekstrak zip tanpa `.git`. Perbaikan:
+
+   ```powershell
+   git init -b main
+   git add -A .
+   git commit -m "feat: SmartSpend v1.0.0"
+   git remote add origin "https://github.com/<USERNAME>/smartspend-mobile.git"
+   git push -u origin main
+   ```
+
+Cara paling mudah menghindari kasus 1: jalankan `git clone smartspend-mobile.bundle .` (lihat Cara 1),
+karena bundle sudah berisi branch `main` dan tag `v1.0.0`.
+
+### `error: failed to push some refs` / `remote: Repository not found`
+
+Biasanya salah satu dari:
+
+* **URL remote rusak** — sering terjadi kalau URL di-paste lengkap dengan penanda markdown,
+  mis. `[https://github.com/user/repo.git](https://github.com/user/repo.git)`. Lihat URL yang
+  tersimpan dan perbaiki:
+
+  ```powershell
+  git remote -v
+  git remote set-url origin "https://github.com/<USERNAME>/smartspend-mobile.git"
+  ```
+
+* **Repo GitHub belum dibuat**, atau namanya beda (`edmames/smartspend-mobile` vs `smartspend-mobile`).
+  Buat dulu via https://github.com/new (jangan centang "Add a README", supaya tidak bentrok).
+
+* **Autentikasi** — GitHub tidak menerima password akun. Pakai Personal Access Token sebagai
+  password, atau masuk lewat Git Credential Manager yang muncul otomatis di Windows.
+
+### Mau menghindari `master` di repo berikutnya
+
+```powershell
+git config --global init.defaultBranch main
+```
 
 ---
 
