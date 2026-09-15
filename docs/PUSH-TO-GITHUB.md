@@ -1,9 +1,10 @@
 # Simpan SmartSpend ke GitHub
 
-Repo git-nya **sudah siap** di `/home/user/smartspend-mobile`: branch `main`, 2 commit, 107 file
+Repo git-nya **sudah siap** di `/home/user/smartspend-mobile`: branch `main`, 5 commit, 114 file
 ter-track (tanpa `node_modules`, `.expo`, `dist`, dan tanpa `.env`).
 
 ```
+5b81e7e  docs: rename default branch to main, add push troubleshooting (Windows)
 3987451  chore(repo): GitHub Pages demo, CI badge, changelog, templates
 9e51c36  docs: add GitHub push guide (bundle / remote / gh cli)
 441760e  ci: run strict typecheck, 171 logic checks and web export on push
@@ -16,8 +17,8 @@ Ada dua paket yang bisa diunduh dari workspace:
 
 | File | Isi | Kapan dipakai |
 | --- | --- | --- |
-| `smartspend-mobile.bundle` (775 KB) | Seluruh riwayat git (2 commit, branch `main`) | Cara paling bersih: clone dari bundle → push ke GitHub, riwayat ikut terbawa |
-| `smartspend-mobile-source.zip` (1,7 MB) | Snapshot sumber (276 file, termasuk `.git/`) | Kalau lebih suka unzip manual lalu push |
+| `smartspend-mobile.bundle` (~785 KB) | Seluruh riwayat git (5 commit, branch `main`, tag `v1.0.0`) | Cara paling bersih: clone dari bundle → push ke GitHub, riwayat ikut terbawa |
+| `smartspend-mobile-source.zip` (~1,7 MB) | Snapshot sumber (305 file, termasuk `.git/`) | Kalau lebih suka unzip manual lalu push |
 
 > Catatan: sandbox ini tidak menyimpan kredensial (`.git/config` & `.netrc` difilter dari snapshot) dan
 > tidak punya akses ke akun GitHub Anda, jadi **langkah push harus dijalankan di komputer Anda**.
