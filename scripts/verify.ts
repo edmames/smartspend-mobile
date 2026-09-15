@@ -27,6 +27,14 @@ import { buildBackupPayload, buildMonthlyReport, mergeById, validateBackupPayloa
 import { validateBudgetInput, validateTransactionInput, validateWalletInput } from '../src/utils/validation';
 import { translate } from '../src/utils/constants';
 import {
+  healthUrlFor,
+  isSupabaseConfigured,
+  maskAnonKey,
+  normalizedBaseUrl,
+  parseSupabaseEnv,
+  projectRefOf,
+} from '../src/utils/supabaseConfig';
+import {
   __setStorageBackendForTests,
   configureStorageBackend,
   createMemoryBackend,
@@ -523,6 +531,51 @@ async function runAsyncChecks(): Promise<void> {
 /* -------------------------------------------------------------------------- */
 /*       13. Store integration — balances shown on screen update instantly     */
 /* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*                          10. Supabase configuration                        */
+/* -------------------------------------------------------------------------- */
+
+section('Supabase configuration (optional cloud layer)');
+
+const VALID_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.abcdefghijklmnop';
+
+equal('empty env is not configured', parseSupabaseEnv({}), { configured: false, reason: 'missing_url' });
+equal('url without anon key', parseSupabaseEnv({ url: 'https://abcd.supabase.co' }), {
+  configured: false,
+  reason: 'missing_key',
+});
+equal('placeholder url is rejected', parseSupabaseEnv({ url: 'https://<project-ref>.supabase.co', anonKey: VALID_KEY }), {
+  configured: false,
+  reason: 'missing_url',
+});
+equal('garbage url is rejected', parseSupabaseEnv({ url: 'not-a-url', anonKey: VALID_KEY }), {
+  configured: false,
+  reason: 'invalid_url',
+});
+equal('plain http is rejected', parseSupabaseEnv({ url: 'http://abcd.supabase.co', anonKey: VALID_KEY }), {
+  configured: false,
+  reason: 'invalid_url',
+});
+equal('REST path instead of project root is rejected', parseSupabaseEnv({ url: 'https://abcd.supabase.co/rest/v1', anonKey: VALID_KEY }), {
+  configured: false,
+  reason: 'invalid_url',
+});
+
+const parsedSupabase = parseSupabaseEnv({ url: 'https://abcd.supabase.co/', anonKey: VALID_KEY });
+check('valid env is configured', parsedSupabase.configured);
+equal(
+  'project ref + normalised url + masked key',
+  parsedSupabase.configured ? [parsedSupabase.projectRef, parsedSupabase.url, parsedSupabase.maskedKey] : [],
+  ['abcd', 'https://abcd.supabase.co', `${VALID_KEY.slice(0, 6)}…${VALID_KEY.slice(-4)}`],
+);
+equal('project ref from a plain project url', projectRefOf('https://efgh.supabase.co'), 'efgh');
+equal('custom domain falls back to the host', projectRefOf('https://api.myapp.dev'), 'api.myapp.dev');
+equal('trailing slashes are stripped', normalizedBaseUrl('https://abcd.supabase.co///'), 'https://abcd.supabase.co');
+equal('short keys are never partially shown', maskAnonKey('abc123'), '••••');
+equal('health endpoint', healthUrlFor('https://abcd.supabase.co//'), 'https://abcd.supabase.co/auth/v1/health');
+check('isSupabaseConfigured(false) for empty env', isSupabaseConfigured({}) === false);
+check('isSupabaseConfigured(true) for complete env', isSupabaseConfigured({ url: 'https://abcd.supabase.co', anonKey: VALID_KEY }));
 
 /**
  * Regression suite for the bug where a wallet's opening balance was written to

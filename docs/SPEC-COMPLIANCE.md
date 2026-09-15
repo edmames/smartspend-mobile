@@ -32,6 +32,7 @@ Requirement-by-requirement traceability from the original build prompt to the co
 | `src/services/*` | ✅ | storage.service, ledger.service, export.service ＋ file.service |
 | `src/store/*` | ✅ | auth, transaction, wallet, budget, savings, settings ＋ snapshot |
 | `src/types/index.ts` | ✅ | all interfaces + result/error unions |
+| Supabase ＋ | ✅ Opsional (`src/services/supabase.service.ts`) | Tidak ada di spesifikasi awal: ditambahkan sebagai lapisan cloud opsional. Tanpa env var, aplikasi tetap 100% offline dan UI menyatakan alasannya. Belum termasuk: login Supabase, sinkronisasi tabel, unggah backup (lihat `docs/SUPABASE-SETUP.md`). |
 | Categories ＋ | ✅ `vacation` (Liburan), `education` (Pendidikan) | additive expense categories requested by the user; they also appear in reports and monthly budgets (budgets are derived from the expense category list). |
 | Wallet model ＋ | ✅ `Wallet.brand?` | additive, optional provider mark (`WalletBrand`) for bank/e-wallet wallets; validated against the wallet type, tolerated as absent in older backups. Requested by the user (wallet-type elements had to look like identity marks, not coloured text). |
 | `src/utils/*` | ✅ | validation, formatting, calculations, constants (incl. i18n), date, haptics |
@@ -127,7 +128,7 @@ types): `User`, `StoredCredential`, `AuthSession`, `Wallet`, `Transaction`, `Sav
 
 ```
 npm run typecheck   # 0 errors (strict)
-npm run verify      # 171 checks, 0 failures
+npm run verify      # 186 checks, 0 failures
 npx expo export --platform web   # Metro bundle succeeds
 ```
 

@@ -7,7 +7,7 @@ ter-track (tanpa `node_modules`, `.expo`, `dist`, dan tanpa `.env`).
 5b81e7e  docs: rename default branch to main, add push troubleshooting (Windows)
 3987451  chore(repo): GitHub Pages demo, CI badge, changelog, templates
 9e51c36  docs: add GitHub push guide (bundle / remote / gh cli)
-441760e  ci: run strict typecheck, 171 logic checks and web export on push
+441760e  ci: run strict typecheck, 186 logic checks and web export on push
 c10efb6  feat: SmartSpend — personal finance app (Expo + TypeScript)
 ```
 
@@ -206,9 +206,11 @@ bertahan setelah reload — beda dengan iframe preview sandbox.
    * Build Command: `npx expo export --platform web`
    * Output Directory: `dist`
    * Install Command: `npm ci`
-3. **Environment Variables** (opsional, hanya kalau nanti memakai Supabase/Telegram):
+3. **Environment Variables** (opsional, hanya kalau memakai Supabase/Telegram):
    `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`,
    `EXPO_PUBLIC_TELEGRAM_BOT_TOKEN`. Aplikasi tetap jalan tanpa ini (offline-first).
+   Rincian + skema SQL: `docs/SUPABASE-SETUP.md`. **Penting:** variabel ditanam saat build,
+   jadi setelah menambahkannya lakukan **Redeploy**.
 4. **Deploy**. Hasilnya di `https://smartspend-mobile.vercel.app` (atau nama lain yang Anda pilih).
 5. Setiap `git push` berikutnya otomatis membuat deployment baru, dan setiap PR mendapat
    **Preview URL** sendiri untuk dites sebelum merge.
@@ -272,7 +274,7 @@ di riwayat git. Kalau nanti aset Anda >50 MB, pertimbangkan **Git LFS** — tapi
 
 | Berkas | Fungsi |
 | --- | --- |
-| `.github/workflows/ci.yml` | Typecheck + 171 cek + export web pada setiap push/PR |
+| `.github/workflows/ci.yml` | Typecheck + 186 cek + export web pada setiap push/PR |
 | `.github/workflows/pages.yml` | Build & deploy demo web ke GitHub Pages |
 | `vercel.json` | Konfigurasi deploy Vercel (build statis, SPA rewrite, cache header) |
 | `package.json` → `engines.node` | Memastikan Vercel/CI memakai Node 20+ |
@@ -287,7 +289,7 @@ di riwayat git. Kalau nanti aset Anda >50 MB, pertimbangkan **Git LFS** — tapi
 ## Setelah ter-push
 
 * **CI langsung jalan.** `.github/workflows/ci.yml` menjalankan `npm ci`, `npm run typecheck`,
-  `npm run verify` (171 cek) dan `npm run export:web`. Ketiganya sudah diuji lokal dan hijau.
+  `npm run verify` (186 cek) dan `npm run export:web`. Ketiganya sudah diuji lokal dan hijau.
 * **README GitHub** menampilkan `README.md` di root — di dalamnya ada quick start, peta fitur,
   aturan ledger, dan ringkasan design system (`docs/DESIGN-SYSTEM.md`).
 * **Pratinjau desain** ada di `docs/*.svg` (mock Beranda, form transaksi, penanda dompet) — bisa

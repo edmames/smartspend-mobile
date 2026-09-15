@@ -4,7 +4,7 @@
 [![Deploy web demo](https://github.com/<USERNAME>/smartspend-mobile/actions/workflows/pages.yml/badge.svg)](https://github.com/<USERNAME>/smartspend-mobile/actions/workflows/pages.yml)
 ![Expo SDK 57](https://img.shields.io/badge/Expo-SDK%2057-000020)
 ![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6)
-![Logic checks](https://img.shields.io/badge/logic%20checks-171%2F171-2ea043)
+![Logic checks](https://img.shields.io/badge/logic%20checks-186%2F186-2ea043)
 ![License MIT](https://img.shields.io/badge/License-MIT-yellow)
 
 A mobile-first personal finance app built with **Expo (React Native)**, **TypeScript (strict)**,
@@ -44,7 +44,7 @@ cd smartspend-mobile
 npm install
 npm start           # Expo dev server (scan the QR with Expo Go)
 npm run web         # run in the browser
-npm run check       # typecheck + 171-check verification suite
+npm run check       # typecheck + 186-check verification suite
 ```
 
 First launch: create a local account (email + password) on the register screen — data is stored on
@@ -112,7 +112,7 @@ smartspend-mobile/
 │   ├── types/index.ts          # every domain type (single source of truth)
 │   ├── utils/                  # calculations, validation, formatting, date, constants (incl. i18n), haptics
 │   └── styles/                 # colors.ts, theme.ts
-├── scripts/verify.ts           # 171 checks: parsing, dates, ledger, reports, budgets, import/export
+├── scripts/verify.ts           # 186 checks: parsing, dates, ledger, reports, budgets, import/export
 ├── app.json · eas.json · tsconfig.json · package.json
 └── docs/SPEC-COMPLIANCE.md     # spec → implementation traceability + deviations
 ```
@@ -190,6 +190,9 @@ Full token list, rules and component inventory: [`docs/DESIGN-SYSTEM.md`](docs/D
   with a live balance that follows the money's direction, a tile grid of categories, wallet chips carrying
   the Dompet marks (plus an inline "new wallet" chip), and one compact date/method row
   (preview: `docs/transaction-form.svg`).
+* **Cloud is optional and fails quietly**: with no `EXPO_PUBLIC_SUPABASE_*` variables the app is
+  fully offline; Settings → Cloud shows why it is unconfigured, and a "Uji koneksi" action verifies
+  a real project (`docs/SUPABASE-SETUP.md` includes the schema + RLS to copy).
 * **Savings deposits/withdrawals live on the Savings screen**, not in the add-transaction form: they move
   money between a wallet and a goal without changing total money, and they need the goal's progress in view.
 * **One month is a composition, not a trend**: the dashboard shows a donut ("Tren 1 bulan") of this

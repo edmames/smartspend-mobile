@@ -10,6 +10,14 @@ import { useTheme, useT } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSettingsStore } from '../../src/store/settingsStore';
 import { useStorage } from '../../src/hooks/useStorage';
+import {
+  isSupabaseConfigured,
+  maskAnonKey,
+  parseSupabaseEnv,
+  readSupabaseEnv,
+  type ConnectionResult,
+} from '../../src/utils/supabaseConfig';
+import { testSupabaseConnection } from '../../src/services/supabase.service';
 import type { BackupPayload } from '../../src/types';
 import { AppText } from '../../src/components/ui/AppText';
 import { Card, Divider, SectionHeader } from '../../src/components/ui/Card';
@@ -37,6 +45,37 @@ export default function SettingsScreen() {
   const updateLanguage = useSettingsStore((state) => state.updateLanguage);
   const updateTelegram = useSettingsStore((state) => state.updateTelegram);
   const { status, exportBackup, pickBackup, applyBackup, deleteAllData } = useStorage();
+
+  /* ------------------------------- Supabase ------------------------------- */
+  const supabaseEnv = readSupabaseEnv();
+  const supabaseStatus = parseSupabaseEnv(supabaseEnv);
+  const [cloudBusy, setCloudBusy] = useState(false);
+  const [cloudResult, setCloudResult] = useState<ConnectionResult | null>(null);
+
+  const cloudSubtitle = supabaseStatus.configured
+    ? `${t('settings.cloud_project')}: ${supabaseStatus.projectRef} · ${maskAnonKey(supabaseEnv.anonKey ?? '')}`
+    : t(`settings.cloud_${supabaseStatus.reason}` as never);
+
+  const handleTestCloud = useCallback(async () => {
+    setCloudBusy(true);
+    setCloudResult(null);
+    const result = await testSupabaseConnection(supabaseEnv);
+    setCloudResult(result);
+    setCloudBusy(false);
+    if (result.ok) toast.success(`${t('settings.cloud_ok')} · ${result.latencyMs} ms`);
+    else
+      toast.error(
+        t(
+          (result.code === 'network'
+            ? 'settings.cloud_fail_network'
+            : result.code === 'unauthorized'
+              ? 'settings.cloud_fail_auth'
+              : result.code === 'server'
+                ? 'settings.cloud_fail_server'
+                : 'settings.cloud_hint') as never,
+        ),
+      );
+  }, [supabaseEnv, t, toast]);
 
   const [busy, setBusy] = useState<'export' | 'import' | 'delete' | null>(null);
   const [pendingBackup, setPendingBackup] = useState<BackupPayload | null>(null);
@@ -171,8 +210,47 @@ export default function SettingsScreen() {
               </View>
             }
           />
-          <SettingRow icon="cloud-outline" title={t('settings.storage_mode_supabase')} subtitle={t('settings.supabase_hint')} last />
+          <SettingRow
+            icon="cloud-outline"
+            title={t('settings.cloud')}
+            subtitle={cloudSubtitle}
+            last
+            onPress={isSupabaseConfigured(supabaseEnv) ? handleTestCloud : undefined}
+            right={
+              cloudBusy ? (
+                <AppText variant="caption" tone="muted">
+                  {t('settings.cloud_testing')}
+                </AppText>
+              ) : (
+                <View style={styles.statusPill}>
+                  <Icon
+                    name={
+                      supabaseStatus.configured
+                        ? cloudResult && !cloudResult.ok
+                          ? 'alert-circle-outline'
+                          : 'checkmark-circle-outline'
+                        : 'ellipse-outline'
+                    }
+                    size={12}
+                    color={
+                      supabaseStatus.configured
+                        ? cloudResult && !cloudResult.ok
+                          ? theme.colors.danger
+                          : theme.colors.success
+                        : theme.colors.textFaint
+                    }
+                  />
+                </View>
+              )
+            }
+          />
         </Card>
+
+        {!supabaseStatus.configured ? (
+          <AppText variant="caption" tone="faint" style={{ marginTop: theme.spacing.sm }}>
+            {t('settings.cloud_hint')}
+          </AppText>
+        ) : null}
 
         <View style={{ marginTop: theme.spacing.sm }}>
           <StorageNotice />
