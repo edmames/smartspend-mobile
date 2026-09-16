@@ -4,34 +4,29 @@
  * Bottom clearance used to be a per-screen magic number (120 here, 132 there,
  * 48 on the detail routes), which is exactly how content ends up hidden behind
  * the tab bar or the floating add button on one screen and not another. These
- * two helpers replace those numbers:
+ * helpers replace those numbers with ONE derived source of truth:
  *
- *   - `useListBottomPadding()`       → scrollable screens: clears the floating add button
+ *   - `useListBottomPadding()`        → scrollable tab screens: clears the FAB footprint
+ *   - `useTabChromeHeight()`          → the tab bar's total footprint over the scene
+ *   - `useFabBottomOffset()`          → where the FAB floats relative to the scene bottom
  *   - `useStackScreenBottomPadding()` → pushed detail screens: clears the home indicator
- *
- * The tab bar itself needs no arithmetic: the navigator lays it out in normal
- * flow (`flexDirection: 'column'`, scenes `flex: 1`), so it reserves its own
- * space and the scene above it is already inset. What content actually has to
- * clear is the floating add button, which is absolutely positioned over the
- * scene at `bottom: 24`.
  */
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-/**
- * Vertical room the floating add button needs: its 56px body, its 24px offset,
- * plus breathing room so the last row is never sitting under it.
- */
-export const FLOATING_CLEARANCE = 120;
+/** Tab bar body height (icons + labels + pill indicator). Mirrors `(tabs)/_layout.tsx`. */
+export const TAB_BAR_BODY_HEIGHT = 54;
+
+/** Rendered FAB body height (`styles.button.height` in `ui/FAB.tsx`). */
+export const FAB_SIZE = 54;
+
+/** FAB lift above the element it floats over (tab bar / home indicator). Matches FAB's default `bottomOffset`. */
+export const FAB_GAP = 24;
+
+/** Extra air so content resting at max scroll never sits flush against the FAB's top edge. */
+export const CONTENT_BREATHING_ROOM = 48;
 
 /** Gap kept under pushed detail screens: home indicator + a little air. */
 const STACK_CLEARANCE = 32;
-
-/**
- * Height of the tab bar body (labels + pill indicator), matching the value in
- * `app/(tabs)/_layout.tsx`. The bar's total footprint adds the device's bottom
- * safe-area inset — see `useTabChromeHeight()`.
- */
-export const TAB_BAR_BODY_HEIGHT = 54;
 
 /**
  * Total vertical space the tab bar occupies over the scene: its body plus the
@@ -44,12 +39,27 @@ export function useTabChromeHeight(): number {
 }
 
 /**
+ * The FAB's full protected footprint above the tab bar: gap + body. Content
+ * resting at the end of a scroll must clear this entire zone, not just the
+ * tab bar — this is the exclusion zone QA flagged on the dashboard.
+ */
+export function useFabFootprint(): number {
+  return FAB_GAP + FAB_SIZE;
+}
+
+/**
  * Bottom padding for scrollable content on a tab screen (with or without a
- * `<FAB />`): clears the tab bar, the floating add button and keeps breathing
- * room, so the last card/row always scrolls fully above both.
+ * `<FAB />`):
+ *
+ *   tab bar body + safe-area inset   (navigation chrome)
+ * + FAB gap + FAB height             (the FAB's full footprint)
+ * + breathing room                   (so the last card never touches the FAB)
+ *
+ * This lets ANY section — including the wide "Tren 1 Bulan" chart card whose
+ * legend hugs the right edge — scroll completely above the FAB exclusion zone.
  */
 export function useListBottomPadding(extra = 0): number {
-  return useTabChromeHeight() + FLOATING_CLEARANCE + extra;
+  return useTabChromeHeight() + useFabFootprint() + CONTENT_BREATHING_ROOM + extra;
 }
 
 /**
@@ -62,19 +72,21 @@ export function useStackScreenBottomPadding(extra = 0): number {
 }
 
 /**
- * Bottom offset for a `<FAB />` on a tab screen: its default 24px lift plus the
- * tab bar footprint, so the button floats just above the bar on every device
- * instead of behind it. Pair with `useListBottomPadding()` on the same screen.
+ * Bottom offset for a `<FAB />` on a tab screen: its lift plus the tab bar
+ * footprint, so the button floats just above the bar on every device instead
+ * of behind it. Derived from the same FAB_GAP the clearance formula uses, so
+ * the FAB and the padding can never drift apart. Pair with
+ * `useListBottomPadding()` on the same screen.
  */
 export function useFabBottomOffset(extra = 0): number {
-  return 24 + useTabChromeHeight() + extra;
+  return FAB_GAP + useTabChromeHeight() + extra;
 }
 
 /**
- * Bottom offset for a `<FAB />` on a pushed screen (no tab bar): the default
- * lift plus the home-indicator inset, so the button clears the gesture bar.
+ * Bottom offset for a `<FAB />` on a pushed screen (no tab bar): the lift plus
+ * the home-indicator inset, so the button clears the gesture bar.
  */
 export function useStackFabBottomOffset(extra = 0): number {
   const insets = useSafeAreaInsets();
-  return 24 + Math.max(insets.bottom, 8) + extra;
+  return FAB_GAP + Math.max(insets.bottom, 8) + extra;
 }
