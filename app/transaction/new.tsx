@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme, useT } from '../../src/hooks/useTheme';
+import { useKeyboardViewportInset } from '../../src/hooks/useKeyboardViewportInset';
 import { useTransactions } from '../../src/hooks/useTransactions';
 import { useWallets } from '../../src/hooks/useWallets';
 import { useSavings } from '../../src/hooks/useSavings';
@@ -22,6 +23,11 @@ export default function NewTransactionScreen() {
   const theme = useTheme();
   // Presented as a modal sheet, so the footer has to clear the home indicator.
   const stackBottomPadding = useStackScreenBottomPadding();
+  // Web/PWA: pad the scroll container by the software keyboard's real height
+  // (observed from the visual viewport), so every field, category tile and the
+  // Save action stay scrollable above the keyboard. Native gets the same
+  // behaviour from the OS-scrolled scroll view and needs no extra inset.
+  const keyboardInset = useKeyboardViewportInset();
   const t = useT();
   const toast = useToast();
   const params = useLocalSearchParams<{ type?: string; walletId?: string }>();
@@ -37,7 +43,10 @@ export default function NewTransactionScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: stackBottomPadding }}
+        contentContainerStyle={{
+          padding: theme.spacing.lg,
+          paddingBottom: stackBottomPadding + keyboardInset,
+        }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

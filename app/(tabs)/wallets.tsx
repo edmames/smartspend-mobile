@@ -22,12 +22,13 @@ import { WalletCard } from '../../src/components/WalletCard';
 import { WalletForm } from '../../src/components/forms/WalletForm';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency } from '../../src/utils/formatting';
-import { useListBottomPadding } from '../../src/utils/layout';
+import { useFabBottomOffset, useListBottomPadding } from '../../src/utils/layout';
 import { progressFraction } from '../../src/utils/calculations';
 
 export default function WalletsScreen() {
   const theme = useTheme();
   const listBottomPadding = useListBottomPadding();
+  const fabBottomOffset = useFabBottomOffset();
   const t = useT();
   const toast = useToast();
   const refreshAll = useRefreshAll();
@@ -171,7 +172,7 @@ export default function WalletsScreen() {
         ) : null}
       </ScrollView>
 
-      <FAB onPress={openCreate} accessibilityLabel={t('wallet.add')} />
+      <FAB bottomOffset={fabBottomOffset} onPress={openCreate} accessibilityLabel={t('wallet.add')} />
 
       <BottomSheet
         visible={Boolean(menuWallet)}

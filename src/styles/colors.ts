@@ -140,9 +140,12 @@ export const darkThemeColors: ThemeColors = {
   borderStrong: 'rgba(229, 231, 235, 0.2)',
 
   text: palette.night100,
+  // One step brighter than the old #9ca3af so "September 2026", chart
+  // percentages and row metadata stay readable on the dark indigo surfaces,
+  // while primary text (night100) keeps a clear two-step lead.
   textMedium: '#c7cfdd',
-  textMuted: palette.night400,
-  textFaint: '#6b7280',
+  textMuted: '#aeb9cc',
+  textFaint: '#7c8aa5',
   textInverse: palette.night900,
 
   onHero: '#ffffff',

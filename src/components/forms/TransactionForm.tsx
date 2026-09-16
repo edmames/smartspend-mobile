@@ -119,6 +119,7 @@ export function TransactionForm({
   );
   const [savingsTargetId, setSavingsTargetId] = useState<string | undefined>(initial?.savingsTargetId ?? targets[0]?.id);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | undefined>(initial?.paymentMethod);
+  const [amountFocused, setAmountFocused] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [newWalletOpen, setNewWalletOpen] = useState(false);
@@ -334,9 +335,11 @@ export function TransactionForm({
         style={[
           styles.amountBlock,
           {
-            backgroundColor: theme.colors.surfaceSunken,
+            backgroundColor: amountFocused ? `${theme.colors.primary}12` : theme.colors.surfaceSunken,
             borderRadius: theme.radius.md,
-            borderColor: errors.amount ? theme.colors.danger : theme.colors.border,
+            borderColor: errors.amount ? theme.colors.danger : amountFocused ? theme.colors.primary : theme.colors.border,
+            borderWidth: errors.amount || amountFocused ? 2 : 1,
+            paddingHorizontal: errors.amount || amountFocused ? 13 : 14,
           },
         ]}
       >
@@ -354,7 +357,12 @@ export function TransactionForm({
             maxLength={20}
             autoFocus={!isEditing}
             accessibilityLabel={t('common.amount')}
-            style={[styles.amountInput, { color: theme.colors.text }]}
+            onFocus={() => setAmountFocused(true)}
+            onBlur={() => setAmountFocused(false)}
+            // Web: the default focus outline is a browser-blue rectangle; on
+            // native it is unused. The teal treatment above is the accessible
+            // focus indicator (border + tinted surface), so the outline is off.
+            style={[styles.amountInput, { color: theme.colors.text, outlineStyle: 'none' } as never]}
           />
         </View>
 

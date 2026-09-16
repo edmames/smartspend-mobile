@@ -27,11 +27,29 @@ export const FLOATING_CLEARANCE = 120;
 const STACK_CLEARANCE = 32;
 
 /**
- * Bottom padding for scrollable content on a screen that renders the tab bar
- * and/or a `<FAB />`. Pass `extra` when something else sits at the bottom edge.
+ * Height of the tab bar body (labels + pill indicator), matching the value in
+ * `app/(tabs)/_layout.tsx`. The bar's total footprint adds the device's bottom
+ * safe-area inset — see `useTabChromeHeight()`.
+ */
+export const TAB_BAR_BODY_HEIGHT = 54;
+
+/**
+ * Total vertical space the tab bar occupies over the scene: its body plus the
+ * safe-area inset it absorbs. The bar overlays the scene, so scroll content
+ * and floating buttons have to clear this to stay visible.
+ */
+export function useTabChromeHeight(): number {
+  const insets = useSafeAreaInsets();
+  return TAB_BAR_BODY_HEIGHT + Math.max(insets.bottom, 8);
+}
+
+/**
+ * Bottom padding for scrollable content on a tab screen (with or without a
+ * `<FAB />`): clears the tab bar, the floating add button and keeps breathing
+ * room, so the last card/row always scrolls fully above both.
  */
 export function useListBottomPadding(extra = 0): number {
-  return FLOATING_CLEARANCE + extra;
+  return useTabChromeHeight() + FLOATING_CLEARANCE + extra;
 }
 
 /**
@@ -41,4 +59,22 @@ export function useListBottomPadding(extra = 0): number {
 export function useStackScreenBottomPadding(extra = 0): number {
   const insets = useSafeAreaInsets();
   return Math.max(insets.bottom, 16) + STACK_CLEARANCE + extra;
+}
+
+/**
+ * Bottom offset for a `<FAB />` on a tab screen: its default 24px lift plus the
+ * tab bar footprint, so the button floats just above the bar on every device
+ * instead of behind it. Pair with `useListBottomPadding()` on the same screen.
+ */
+export function useFabBottomOffset(extra = 0): number {
+  return 24 + useTabChromeHeight() + extra;
+}
+
+/**
+ * Bottom offset for a `<FAB />` on a pushed screen (no tab bar): the default
+ * lift plus the home-indicator inset, so the button clears the gesture bar.
+ */
+export function useStackFabBottomOffset(extra = 0): number {
+  const insets = useSafeAreaInsets();
+  return 24 + Math.max(insets.bottom, 8) + extra;
 }

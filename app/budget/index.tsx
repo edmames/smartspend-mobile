@@ -24,13 +24,14 @@ import { BudgetForm } from '../../src/components/forms/BudgetForm';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency } from '../../src/utils/formatting';
 import { formatMonthYear } from '../../src/utils/date';
-import { useListBottomPadding } from '../../src/utils/layout';
+import { useFabBottomOffset, useListBottomPadding } from '../../src/utils/layout';
 import type { BudgetUsage } from '../../src/types';
 
 export default function BudgetScreen() {
   const theme = useTheme();
   // No tab bar on this route, but the floating add button still sits at the bottom.
   const listBottomPadding = useListBottomPadding();
+  const fabBottomOffset = useFabBottomOffset();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -159,6 +160,7 @@ export default function BudgetScreen() {
       </ScrollView>
 
       <FAB
+        bottomOffset={fabBottomOffset}
         onPress={() => {
           setEditing(null);
           setFormOpen(true);

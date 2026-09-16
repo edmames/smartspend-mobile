@@ -40,7 +40,7 @@ import { formatCurrency } from '../../src/utils/formatting';
 import { CATEGORY_META } from '../../src/utils/constants';
 import { DASHBOARD_RECENT_TRANSACTIONS, DASHBOARD_TOP_WALLETS } from '../../src/utils/constants';
 import { useCountUp } from '../../src/utils/motion';
-import { useListBottomPadding } from '../../src/utils/layout';
+import { useFabBottomOffset, useListBottomPadding } from '../../src/utils/layout';
 
 /** Unequal but still valid flex ratios (a zero share must not collapse). */
 const ratio = (value: number) => (value > 0 ? value : 0.0001);
@@ -51,6 +51,7 @@ export default function DashboardScreen() {
   const language = useLanguage();
   const refreshAll = useRefreshAll();
   const listBottomPadding = useListBottomPadding();
+  const fabBottomOffset = useFabBottomOffset();
 
   const user = useAuthStore((state) => state.user);
   const transactions = useTransactionStore((state) => state.transactions);
@@ -386,7 +387,7 @@ export default function DashboardScreen() {
         </ScrollView>
       )}
 
-      <FAB onPress={() => router.push('/transaction/new')} accessibilityLabel={t('transaction.add')} />
+      <FAB bottomOffset={fabBottomOffset} onPress={() => router.push('/transaction/new')} accessibilityLabel={t('transaction.add')} />
     </SafeAreaView>
   );
 }

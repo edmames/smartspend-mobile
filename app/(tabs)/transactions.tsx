@@ -37,7 +37,7 @@ import {
   TRANSACTION_TYPE_META,
 } from '../../src/utils/constants';
 import { formatDateLong, formatWeekdayShort } from '../../src/utils/date';
-import { useListBottomPadding } from '../../src/utils/layout';
+import { useFabBottomOffset, useListBottomPadding } from '../../src/utils/layout';
 import { formatCurrency } from '../../src/utils/formatting';
 import type { CategoryKey, PeriodFilter, Transaction, TransactionType } from '../../src/types';
 
@@ -50,6 +50,7 @@ interface DayGroup {
 export default function TransactionsScreen() {
   const theme = useTheme();
   const listBottomPadding = useListBottomPadding();
+  const fabBottomOffset = useFabBottomOffset();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -328,7 +329,7 @@ export default function TransactionsScreen() {
           ) : null}
       />
 
-      <FAB onPress={() => router.push('/transaction/new')} accessibilityLabel={t('transaction.add')} />
+      <FAB bottomOffset={fabBottomOffset} onPress={() => router.push('/transaction/new')} accessibilityLabel={t('transaction.add')} />
 
       {/* Filter panel */}
       <BottomSheet visible={filterOpen} onClose={() => setFilterOpen(false)} title={t('common.filter')}>

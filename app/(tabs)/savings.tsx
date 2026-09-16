@@ -23,12 +23,13 @@ import { SavingsCard } from '../../src/components/SavingsCard';
 import { SavingsForm } from '../../src/components/forms/SavingsForm';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency, formatPercentage } from '../../src/utils/formatting';
-import { useListBottomPadding } from '../../src/utils/layout';
+import { useFabBottomOffset, useListBottomPadding } from '../../src/utils/layout';
 import type { SavingsTarget, TargetProgress } from '../../src/types';
 
 export default function SavingsScreen() {
   const theme = useTheme();
   const listBottomPadding = useListBottomPadding();
+  const fabBottomOffset = useFabBottomOffset();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -152,7 +153,7 @@ export default function SavingsScreen() {
         )}
       </ScrollView>
 
-      <FAB onPress={openCreate} accessibilityLabel={t('savings.add')} />
+      <FAB bottomOffset={fabBottomOffset} onPress={openCreate} accessibilityLabel={t('savings.add')} />
 
       <BottomSheet
         visible={Boolean(menuProgress)}
