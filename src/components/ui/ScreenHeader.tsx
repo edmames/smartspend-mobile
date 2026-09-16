@@ -29,9 +29,12 @@ export function ScreenHeader({ title, subtitle, onBack, right, style, withInset 
       style={[
         styles.header,
         {
-          paddingTop: withInset ? insets.top + theme.spacing.sm : 0,
-          paddingBottom: theme.spacing.md,
+          paddingTop: withInset ? insets.top + theme.spacing.sm : theme.spacing.md,
+          paddingBottom: theme.spacing.lg,
           gap: theme.spacing.md,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: theme.colors.border,
+          backgroundColor: theme.colors.background,
         },
         style,
       ]}
@@ -62,7 +65,7 @@ export function ScreenHeader({ title, subtitle, onBack, right, style, withInset 
           {title}
         </AppText>
         {subtitle ? (
-          <AppText variant="small" tone="muted" style={{ marginTop: 2 }} numberOfLines={2}>
+          <AppText variant="body" tone="muted" style={{ marginTop: 2 }} numberOfLines={2}>
             {subtitle}
           </AppText>
         ) : null}
@@ -97,7 +100,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    // Sticky elevation above scrolled content.
+    zIndex: 10,
   },
   backButton: {
     width: 40,

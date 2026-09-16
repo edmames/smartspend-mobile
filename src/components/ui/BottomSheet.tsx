@@ -8,6 +8,7 @@ import {
   Dimensions,
   Easing,
   Modal as RNModal,
+  PanResponder,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -48,6 +49,36 @@ export function BottomSheet({
   const screenHeight = Dimensions.get('window').height;
   const translateY = useRef(new Animated.Value(screenHeight)).current;
   const opacity = useRef(new Animated.Value(0)).current;
+
+  /**
+   * Drag-to-dismiss: past ~20% of the sheet (or a decisive flick) the sheet
+   * closes, otherwise it springs back to rest. Attached to the handle row only,
+   * so the scrollable body still scrolls normally.
+   */
+  const pan = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_event, gesture) => gesture.dy > 6 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+      onPanResponderMove: (_event, gesture) => {
+        if (gesture.dy > 0) translateY.setValue(gesture.dy);
+      },
+      onPanResponderRelease: (_event, gesture) => {
+        const threshold = screenHeight * maxHeightRatio * 0.2;
+        if (gesture.dy > threshold || gesture.vy > 0.7) {
+          onClose();
+          return;
+        }
+        Animated.spring(translateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          friction: 9,
+          tension: 140,
+        }).start();
+      },
+      onPanResponderTerminate: () => {
+        Animated.spring(translateY, { toValue: 0, useNativeDriver: true, friction: 9, tension: 140 }).start();
+      },
+    }),
+  ).current;
 
   useEffect(() => {
     if (reduced) {
@@ -101,7 +132,7 @@ export function BottomSheet({
             },
           ]}
         >
-          <View style={styles.handleRow}>
+          <View style={styles.handleRow} {...pan.panHandlers}>
             <Pressable onPress={onClose} hitSlop={12} accessibilityLabel="Close sheet">
               <View style={[styles.handle, { backgroundColor: theme.colors.borderStrong }]} />
             </Pressable>
@@ -162,7 +193,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   handle: {
-    width: 38,
+    width: 40,
     height: 4,
     borderRadius: 2,
   },

@@ -79,8 +79,10 @@ export function Button({
     outline: colors.primary,
   };
 
-  const heights: Record<ButtonSize, number> = { sm: 34, md: 44, lg: 52 };
+  const heights: Record<ButtonSize, number> = { sm: 32, md: 40, lg: 48 };
   const paddings: Record<ButtonSize, number> = { sm: spacing.md, md: spacing.lg, lg: spacing.xl };
+  /** Keeps the touch target at 44px even though the visual height is smaller. */
+  const hitSlop = Math.max(0, (44 - heights[size]) / 2);
   const textVariant = size === 'sm' ? 'small' : size === 'lg' ? 'bodyLarge' : 'body';
 
   const handlePress = () => {
@@ -98,6 +100,7 @@ export function Button({
       onPressIn={press.handlers.onPressIn}
       onPressOut={press.handlers.onPressOut}
       disabled={isDisabled}
+      hitSlop={hitSlop}
       style={({ pressed }) => [
         styles.base,
         {

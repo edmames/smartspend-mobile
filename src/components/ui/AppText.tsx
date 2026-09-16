@@ -59,7 +59,7 @@ export function AppText({
   children,
   ...rest
 }: AppTextProps) {
-  const { colors, type, fontWeight } = useTheme();
+  const { colors, type, fontWeight, monoFontFamily } = useTheme();
   const resolved = resolveVariant(variant);
 
   const toneColor: Record<TextTone, string> = {
@@ -76,6 +76,8 @@ export function AppText({
 
   const scale = type[resolved];
   const moneyLike = resolved === 'money' || resolved === 'hero' || resolved === 'display';
+  /** Mono variants get a real monospace face; digits stay tabular. */
+  const monoLike = resolved === 'mono' || resolved === 'monoLarge';
 
   return (
     <Text
@@ -88,7 +90,8 @@ export function AppText({
           letterSpacing: scale.letterSpacing,
           color: color ?? toneColor[tone],
         },
-        tabular || moneyLike ? { fontVariant: ['tabular-nums'] } : null,
+        monoLike && monoFontFamily ? { fontFamily: monoFontFamily } : null,
+        tabular || moneyLike || monoLike ? { fontVariant: ['tabular-nums'] } : null,
         align ? { textAlign: align } : null,
         style,
       ]}

@@ -18,6 +18,7 @@ import { BottomSheet } from '../../src/components/ui/BottomSheet';
 import { ConfirmDialog } from '../../src/components/ui/ConfirmDialog';
 import { Button } from '../../src/components/ui/Button';
 import { ProgressBar } from '../../src/components/ui/ProgressBar';
+import { Stagger } from '../../src/components/ui/Stagger';
 import { SavingsCard } from '../../src/components/SavingsCard';
 import { SavingsForm } from '../../src/components/forms/SavingsForm';
 import { useToast } from '../../src/components/ui/Toast';
@@ -133,13 +134,14 @@ export default function SavingsScreen() {
             />
           </Card>
         ) : (
-          progressList.map((progress) => (
-            <SavingsCard
-              key={progress.target.id}
-              progress={progress}
-              onPress={() => router.push(`/savings/${progress.target.id}`)}
-              onLongPress={() => setMenuProgress(progress)}
-            />
+          progressList.map((progress, index) => (
+            <Stagger key={progress.target.id} index={index}>
+              <SavingsCard
+                progress={progress}
+                onPress={() => router.push(`/savings/${progress.target.id}`)}
+                onLongPress={() => setMenuProgress(progress)}
+              />
+            </Stagger>
           ))
         )}
       </ScrollView>

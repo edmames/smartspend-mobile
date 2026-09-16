@@ -23,6 +23,7 @@ import { Icon } from '../../src/components/ui/Icon';
 import { Money } from '../../src/components/ui/Money';
 import { EmptyState } from '../../src/components/ui/EmptyState';
 import { FAB } from '../../src/components/ui/FAB';
+import { Stagger } from '../../src/components/ui/Stagger';
 import { DashboardSkeleton } from '../../src/components/ui/Skeleton';
 import { TransactionRow } from '../../src/components/TransactionRow';
 import { WalletCard } from '../../src/components/WalletCard';
@@ -323,15 +324,16 @@ export default function DashboardScreen() {
                 onAction={() => router.push('/(tabs)/wallets')}
                 style={dense}
               />
-              {topWallets.slice(0, DASHBOARD_TOP_WALLETS).map((wallet) => (
-                <WalletCard
-                  key={wallet.id}
-                  wallet={wallet}
-                  balance={wallet.balance}
-                  share={walletsTotal > 0 ? Math.max(0, wallet.balance) / walletsTotal : 0}
-                  onPress={() => router.push(`/wallet/${wallet.id}`)}
-                  compact
-                />
+              {topWallets.slice(0, DASHBOARD_TOP_WALLETS).map((wallet, index) => (
+                <Stagger key={wallet.id} index={index}>
+                  <WalletCard
+                    wallet={wallet}
+                    balance={wallet.balance}
+                    share={walletsTotal > 0 ? Math.max(0, wallet.balance) / walletsTotal : 0}
+                    onPress={() => router.push(`/wallet/${wallet.id}`)}
+                    compact
+                  />
+                </Stagger>
               ))}
             </>
           )}
@@ -351,19 +353,20 @@ export default function DashboardScreen() {
               <EmptyState compact icon="receipt-outline" title={t('dashboard.no_transactions')} />
             ) : (
               recentTransactions.map((transaction, index) => (
-                <TransactionRow
-                  key={transaction.id}
-                  compact
-                  transaction={transaction}
-                  sourceWalletName={walletName(transaction.walletSourceId)}
-                  destinationWalletName={walletName(transaction.walletDestinationId)}
-                  savingsTargetName={targetName(transaction.savingsTargetId)}
-                  sourceWallet={walletById(transaction.walletSourceId)}
-                  destinationWallet={walletById(transaction.walletDestinationId)}
-                  savingsMark
-                  divider={index > 0}
-                  onPress={() => router.push(`/transaction/${transaction.id}`)}
-                />
+                <Stagger key={transaction.id} index={index}>
+                  <TransactionRow
+                    compact
+                    transaction={transaction}
+                    sourceWalletName={walletName(transaction.walletSourceId)}
+                    destinationWalletName={walletName(transaction.walletDestinationId)}
+                    savingsTargetName={targetName(transaction.savingsTargetId)}
+                    sourceWallet={walletById(transaction.walletSourceId)}
+                    destinationWallet={walletById(transaction.walletDestinationId)}
+                    savingsMark
+                    divider={index > 0}
+                    onPress={() => router.push(`/transaction/${transaction.id}`)}
+                  />
+                </Stagger>
               ))
             )}
           </Card>

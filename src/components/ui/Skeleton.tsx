@@ -5,6 +5,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { motion } from '../../styles/theme';
 import { useReducedMotion } from '../../utils/motion';
 
 export interface SkeletonProps {
@@ -17,17 +18,18 @@ export interface SkeletonProps {
 export function Skeleton({ width = '100%', height = 14, radius, style }: SkeletonProps) {
   const theme = useTheme();
   const reduced = useReducedMotion();
-  const pulse = useRef(new Animated.Value(0.55)).current;
+  const pulse = useRef(new Animated.Value(0.5)).current;
 
   useEffect(() => {
     if (reduced) {
       pulse.setValue(0.75);
       return;
     }
+    // 1500ms cycle: opacity 0.5 → 1 → 0.5.
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulse, { toValue: 1, duration: 760, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 0.55, duration: 760, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 1, duration: motion.skeletonPulse, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0.5, duration: motion.skeletonPulse, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
       ]),
     );
     loop.start();

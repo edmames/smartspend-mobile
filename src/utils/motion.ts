@@ -203,6 +203,39 @@ export function useEntrance(options: { index?: number; delay?: number; distance?
   };
 }
 
+/**
+ * Horizontal shake for rejected input. Fires whenever `trigger` changes to a
+ * new truthy value (typically an error message), and stays still on first
+ * render so a pre-filled error does not animate on mount.
+ */
+export function useShake(trigger: unknown, options: { distance?: number } = {}): AnimatedStyle {
+  const { distance = 4 } = options;
+  const reduced = useReducedMotion();
+  const value = useRef(new Animated.Value(0)).current;
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    if (!trigger || reduced) return;
+
+    value.setValue(0);
+    const step = (toValue: number, duration: number) =>
+      Animated.timing(value, { toValue, duration, easing: Easing.linear, useNativeDriver: true });
+
+    Animated.sequence([
+      step(-distance, 60),
+      step(distance, 60),
+      step(-distance / 2, 60),
+      step(0, 80),
+    ]).start();
+  }, [distance, reduced, trigger, value]);
+
+  return { transform: [{ translateX: value }] };
+}
+
 /** Bar widths / row flashes: a short eased tween on a plain style value. */
 export function useTweenStyle(target: number, styleProp: 'opacity' | 'width'): StyleProp<ViewStyle> {
   const reduced = useReducedMotion();

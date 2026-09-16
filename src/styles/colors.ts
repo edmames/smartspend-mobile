@@ -159,6 +159,48 @@ export const darkThemeColors: ThemeColors = {
   chipTint: 'rgba(229, 231, 235, 0.07)',
 };
 
+/**
+ * Flat, spec-named palette. Design-system consumers (and new screens) can
+ * import a single semantic token without remembering the role-based key:
+ *
+ *   import { COLORS } from '@/styles/colors';
+ */
+export const COLORS = {
+  /* Background & surface */
+  DARK_BG: darkThemeColors.background,
+  DARK_SURFACE: darkThemeColors.card,
+  DARK_SURFACE_ALT: darkThemeColors.cardAlt,
+  DARK_OVERLAY: darkThemeColors.overlay,
+
+  /* Text */
+  TEXT_PRIMARY: darkThemeColors.text,
+  TEXT_SECONDARY: darkThemeColors.textMuted,
+  TEXT_TERTIARY: darkThemeColors.textFaint,
+
+  /* Accent (teal / cyan) */
+  ACCENT_PRIMARY: darkThemeColors.primary,
+  ACCENT_LIGHT: darkThemeColors.primaryBright,
+  ACCENT_DARK: darkThemeColors.primaryDeep,
+  ACCENT_SUBTLE: darkThemeColors.accentSoft,
+
+  /* Status */
+  SUCCESS: darkThemeColors.success,
+  WARNING: darkThemeColors.warning,
+  DANGER: darkThemeColors.danger,
+  INFO: darkThemeColors.info,
+
+  /* Borders & dividers */
+  BORDER: darkThemeColors.border,
+  BORDER_LIGHT: 'rgba(229, 231, 235, 0.05)',
+  BORDER_DARK: darkThemeColors.borderStrong,
+
+  /* Semantic ledger colours */
+  INCOME_COLOR: darkThemeColors.incomeColor,
+  EXPENSE_COLOR: darkThemeColors.expenseColor,
+  TRANSFER_COLOR: darkThemeColors.transferColor,
+  SAVINGS_COLOR: darkThemeColors.savingsColor,
+} as const;
+
 export const lightThemeColors: ThemeColors = {
   background: '#f3f6fb',
   backgroundAlt: palette.white,

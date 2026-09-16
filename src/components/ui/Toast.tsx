@@ -97,8 +97,13 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: () =>
   const meta = TOAST_META[toast.kind];
   const accent = theme.colors[meta.tone];
 
-  /** Solid status surface with a matching hairline — high contrast on dark. */
-  const pillBackground = theme.dark ? theme.colors.cardAlt : theme.colors.card;
+  /**
+   * The pill is filled with its own status colour, so the message reads before
+   * the text is parsed. Amber needs dark ink to stay legible; the rest take
+   * white.
+   */
+  const pillBackground = accent;
+  const pillForeground = toast.kind === 'warning' ? '#231400' : '#ffffff';
 
   useEffect(() => {
     if (!reduced) {
@@ -128,7 +133,6 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: () =>
           theme.elevation.floating,
           {
             backgroundColor: pillBackground,
-            borderColor: theme.colors.borderStrong,
             borderRadius: theme.radius.pill,
           },
         ]}
@@ -140,13 +144,13 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: () =>
             borderRadius: 11,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: `${accent}24`,
+            backgroundColor: 'rgba(255,255,255,0.22)',
             marginRight: 10,
           }}
         >
-          <Icon name={meta.icon} size={13} color={accent} />
+          <Icon name={meta.icon} size={14} color={pillForeground} />
         </View>
-        <AppText variant="small" tone="medium" style={{ flex: 1 }}>
+        <AppText variant="body" weight="medium" color={pillForeground} style={{ flex: 1 }}>
           {toast.message}
         </AppText>
       </Pressable>
@@ -172,9 +176,8 @@ const styles = StyleSheet.create({
   toast: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 9,
-    paddingHorizontal: 14,
-    borderWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
 });
 

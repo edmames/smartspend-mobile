@@ -74,6 +74,8 @@ export function Card({
           borderWidth: 1,
           borderColor: colors.border,
         },
+    // A whisper of shadow, never more — the hairline does the real work.
+    resolved === 'bare' ? null : theme.cardShadow,
     resolved === 'raised' ? theme.elevation.floating : null,
     padded && resolved !== 'bare' ? { padding: spacing.card } : null,
     style,

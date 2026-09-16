@@ -2,10 +2,14 @@
  * PieChart — donut with hairline gaps between segments, rounded caps and the
  * total in the centre. The legend doubles as the value table.
  */
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, G, Path } from 'react-native-svg';
 import { useTheme, useLanguage } from '../../hooks/useTheme';
 import { AppText } from '../ui/AppText';
+import { Stagger } from '../ui/Stagger';
+import { motion } from '../../styles/theme';
+import { useReducedMotion } from '../../utils/motion';
 import { formatCurrency, formatPercentage } from '../../utils/formatting';
 
 export interface PieSlice {
@@ -49,6 +53,30 @@ export function PieChart({
 }: PieChartProps) {
   const theme = useTheme();
   const language = useLanguage();
+  const reduced = useReducedMotion();
+
+  /* The ring and its legend settle in once — scale up a touch while fading. */
+  const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
+  useEffect(() => {
+    if (reduced) {
+      enter.setValue(1);
+      return;
+    }
+    enter.setValue(0);
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: motion.slow,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [enter, reduced]);
+
+  const ringStyle = {
+    opacity: enter,
+    transform: [
+      { scale: enter.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) },
+    ],
+  };
 
   const total = data.reduce((sum, slice) => sum + slice.value, 0);
   const radius = (size - thickness) / 2;
@@ -67,7 +95,7 @@ export function PieChart({
 
   return (
     <View style={[styles.container, style]}>
-      <View style={{ width: size, height: size }}>
+      <Animated.View style={[{ width: size, height: size }, ringStyle]}>
         <Svg width={size} height={size}>
           <G>
             {total <= 0 ? (
@@ -112,27 +140,29 @@ export function PieChart({
             ) : null}
           </View>
         ) : null}
-      </View>
+      </Animated.View>
 
       {showLegend ? (
         <View style={styles.legend}>
-          {visible.map((slice) => {
+          {visible.map((slice, index) => {
             const percentage = total > 0 ? (slice.value / total) * 100 : 0;
             return (
-              <View key={slice.label} style={styles.legendRow}>
-                <View style={[styles.dot, { backgroundColor: slice.color }]} />
-                <AppText variant="small" style={{ flex: 1 }} numberOfLines={1}>
-                  {slice.label}
-                </AppText>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <AppText variant="small" weight="semibold" tabular>
-                    {formatCurrency(slice.value, { withSymbol: false })}
+              <Stagger key={slice.label} index={index}>
+                <View style={styles.legendRow}>
+                  <View style={[styles.dot, { backgroundColor: slice.color }]} />
+                  <AppText variant="small" style={{ flex: 1 }} numberOfLines={1}>
+                    {slice.label}
                   </AppText>
-                  <AppText variant="caption" tone="faint" tabular>
-                    {formatPercentage(percentage, 1, language)}
-                  </AppText>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <AppText variant="small" weight="semibold" tabular>
+                      {formatCurrency(slice.value, { withSymbol: false })}
+                    </AppText>
+                    <AppText variant="caption" tone="faint" tabular>
+                      {formatPercentage(percentage, 1, language)}
+                    </AppText>
+                  </View>
                 </View>
-              </View>
+              </Stagger>
             );
           })}
         </View>

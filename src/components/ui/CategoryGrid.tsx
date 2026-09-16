@@ -1,16 +1,19 @@
 /**
  * CategoryGrid — every category is its own tappable element.
  *
- * Replaces the old category dropdown: a wrapping grid of tiles (icon + label)
- * so the whole set stays visible in one glance and nothing is hidden behind a
- * picker. Idle tiles carry a neutral icon chip; the selected tile takes the
- * category tint on its circle and a matching hairline edge.
+ * Replaces the old category dropdown: a three-column grid of tiles (icon +
+ * label) so the whole set stays visible in one glance and nothing is hidden
+ * behind a picker. Idle tiles carry a neutral icon chip; the selected tile
+ * fills its 40px circle with the category colour, switches the glyph to white
+ * and springs up to 110% so the choice is felt as well as seen.
  */
-import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme, useT } from '../../hooks/useTheme';
 import type { CategoryKey } from '../../types';
 import { CATEGORY_META } from '../../utils/constants';
 import { haptics } from '../../utils/haptics';
+import { useReducedMotion } from '../../utils/motion';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 
@@ -24,7 +27,6 @@ export interface CategoryGridProps {
 }
 
 export function CategoryGrid({ categories, value, onChange, error, style }: CategoryGridProps) {
-  const theme = useTheme();
   const t = useT();
 
   return (
@@ -34,43 +36,17 @@ export function CategoryGrid({ categories, value, onChange, error, style }: Cate
           const meta = CATEGORY_META[key];
           const selected = key === value;
           return (
-            <Pressable
+            <CategoryTile
               key={key}
+              color={meta.color}
+              icon={meta.icon as never}
+              label={t(`category.${key}` as never)}
+              selected={selected}
               onPress={() => {
                 haptics.selection();
                 onChange(key);
               }}
-              accessibilityRole="radio"
-              accessibilityState={{ selected }}
-              accessibilityLabel={t(`category.${key}` as never)}
-              style={({ pressed }) => [
-                styles.tile,
-                {
-                  backgroundColor: selected ? `${meta.color}14` : theme.colors.chipTint,
-                  borderColor: selected ? `${meta.color}66` : 'transparent',
-                  opacity: pressed ? 0.88 : 1,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.iconChip,
-                  { backgroundColor: selected ? `${meta.color}2e` : theme.colors.chipTint },
-                ]}
-              >
-                <Icon name={meta.icon as never} size={18} color={selected ? meta.color : theme.colors.textMuted} />
-              </View>
-
-              <AppText
-                variant="caption"
-                weight={selected ? 'semibold' : 'regular'}
-                color={selected ? theme.colors.text : theme.colors.textMuted}
-                numberOfLines={1}
-                style={{ marginTop: 7 }}
-              >
-                {t(`category.${key}` as never)}
-              </AppText>
-            </Pressable>
+            />
           );
         })}
       </View>
@@ -84,6 +60,87 @@ export function CategoryGrid({ categories, value, onChange, error, style }: Cate
   );
 }
 
+/** One tile — owns its own spring so hooks stay out of the parent's loop. */
+function CategoryTile({
+  color,
+  icon,
+  label,
+  selected,
+  onPress,
+}: {
+  color: string;
+  icon: Parameters<typeof Icon>[0]['name'];
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+}) {
+  const theme = useTheme();
+  const reduced = useReducedMotion();
+  const scale = useRef(new Animated.Value(selected ? 1.1 : 1)).current;
+  const [pressed, setPressed] = useState(false);
+
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: reduced ? 1 : selected ? 1.1 : 1,
+      useNativeDriver: true,
+      friction: 6,
+      tension: 160,
+    }).start();
+  }, [reduced, scale, selected]);
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      accessibilityRole="radio"
+      accessibilityState={{ selected }}
+      accessibilityLabel={label}
+      style={styles.tile}
+    >
+      <Animated.View style={[styles.tileInner, { transform: [{ scale }] }]}>
+        <View
+          style={[
+            styles.iconChip,
+            {
+              backgroundColor: selected ? color : theme.colors.accentSoft,
+              borderWidth: selected ? 0 : 1,
+              borderColor: theme.colors.border,
+            },
+          ]}
+        >
+          <Icon name={icon} size={20} color={selected ? '#ffffff' : theme.colors.textMuted} />
+        </View>
+
+        <AppText
+          variant="caption"
+          weight={selected ? 'semibold' : 'regular'}
+          color={selected ? theme.colors.text : theme.colors.textMuted}
+          align="center"
+          numberOfLines={2}
+          style={{ marginTop: 7 }}
+        >
+          {label}
+        </AppText>
+      </Animated.View>
+
+      {/* Selection tint sits behind the content, so the label keeps contrast. */}
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          styles.tileSurface,
+          {
+            backgroundColor: selected ? theme.colors.accentSoft : theme.colors.chipTint,
+            borderColor: selected ? color : 'transparent',
+            opacity: pressed ? 0.85 : 1,
+          },
+        ]}
+        pointerEvents="none"
+      />
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
@@ -91,13 +148,21 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tile: {
-    // Four per row on a 360–400px screen, more when there is room.
-    width: 76,
-    paddingVertical: 10,
-    paddingHorizontal: 4,
-    borderRadius: 16,
-    borderWidth: 1,
+    // Three per row on a phone, more when there is width to spare.
+    flexGrow: 1,
+    flexBasis: '30%',
+    minWidth: 92,
+    paddingVertical: 12,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tileSurface: {
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  tileInner: {
+    alignItems: 'center',
+    paddingHorizontal: 6,
   },
   iconChip: {
     width: 40,

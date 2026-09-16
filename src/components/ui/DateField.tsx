@@ -151,24 +151,41 @@ export function CalendarSheet({
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title={title} maxHeightRatio={0.72}>
-      <View style={styles.calendarHeader}>          <Pressable
-            onPress={() => setCursor((current) => addMonthsToYearMonth(current, -1))}
-            disabled={cursorIsMin}
-            hitSlop={10}
-            style={[styles.arrow, { backgroundColor: cursorIsMin ? 'transparent' : theme.colors.chipTint, opacity: cursorIsMin ? theme.opacity.disabled : 1 }]}
-          >
-            <Icon name="chevron-back" size={20} color={theme.colors.text} />
-          </Pressable>
-        <AppText variant="bodyLarge" weight="semibold">
-          {formatMonthYear(cursor, language)}
-        </AppText>
+      <View style={styles.calendarHeader}>
+        <Pressable
+          onPress={() => setCursor((current) => addMonthsToYearMonth(current, -1))}
+          disabled={cursorIsMin}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={formatMonthYear(addMonthsToYearMonth(cursor, -1), language)}
+          style={[
+            styles.arrow,
+            {
+              backgroundColor: cursorIsMin ? 'transparent' : theme.colors.accentSoft,
+              opacity: cursorIsMin ? theme.opacity.disabled : 1,
+            },
+          ]}
+        >
+          <Icon name="chevron-back" size={20} color={theme.colors.primary} />
+        </Pressable>
+
+        <AppText variant="h3">{formatMonthYear(cursor, language)}</AppText>
+
         <Pressable
           onPress={() => setCursor((current) => addMonthsToYearMonth(current, 1))}
           disabled={cursorIsMax}
           hitSlop={10}
-          style={[styles.arrow, { backgroundColor: cursorIsMax ? 'transparent' : theme.colors.chipTint, opacity: cursorIsMax ? theme.opacity.disabled : 1 }]}
+          accessibilityRole="button"
+          accessibilityLabel={formatMonthYear(addMonthsToYearMonth(cursor, 1), language)}
+          style={[
+            styles.arrow,
+            {
+              backgroundColor: cursorIsMax ? 'transparent' : theme.colors.accentSoft,
+              opacity: cursorIsMax ? theme.opacity.disabled : 1,
+            },
+          ]}
         >
-          <Icon name="chevron-forward" size={20} color={theme.colors.text} />
+          <Icon name="chevron-forward" size={20} color={theme.colors.primary} />
         </Pressable>
       </View>
 
@@ -260,8 +277,8 @@ const styles = StyleSheet.create({
   },
   arrow: {
     width: 40,
-    height: 38,
-    borderRadius: 12,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },

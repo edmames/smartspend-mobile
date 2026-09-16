@@ -5,8 +5,10 @@
  * fade to nothing, and a single hairline baseline grid. Touching the chart shows
  * a crosshair with the values for that month instead of permanent labels.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
+  Easing,
   PanResponder,
   StyleSheet,
   View,
@@ -17,7 +19,16 @@ import {
 import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 import { useTheme, useLanguage } from '../../hooks/useTheme';
 import { AppText } from '../ui/AppText';
+import { motion } from '../../styles/theme';
+import { useReducedMotion } from '../../utils/motion';
 import { formatCompactCurrency, formatCurrency } from '../../utils/formatting';
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+/**
+ * Dash length used for the draw-on animation. Longer than any realistic path, so
+ * the line always starts fully hidden and finishes fully drawn.
+ */
+const DRAW_LENGTH = 4000;
 
 export interface ChartSeries {
   label: string;
@@ -49,8 +60,27 @@ export function AreaChart({
 }: AreaChartProps) {
   const theme = useTheme();
   const language = useLanguage();
+  const reduced = useReducedMotion();
   const [width, setWidth] = useState(0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  /* Lines draw themselves in once, over 1000ms, eased in-out. */
+  const draw = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) {
+      draw.setValue(1);
+      return;
+    }
+    draw.setValue(0);
+    Animated.timing(draw, {
+      toValue: 1,
+      duration: motion.chartDraw,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [draw, reduced]);
+
+  const dashOffset = draw.interpolate({ inputRange: [0, 1], outputRange: [DRAW_LENGTH, 0] });
 
   const format = formatValue ?? ((value: number) => formatCompactCurrency(value, language));
   const points = Math.max(labels.length, 1);
@@ -140,14 +170,17 @@ export function AreaChart({
 
             {series.map((item, index) => (
               <G key={item.label}>
-                <Path d={buildArea(item.values)} fill={`url(#areaFill${index})`} />
-                <Path
+                <AnimatedPath d={buildArea(item.values)} fill={`url(#areaFill${index})`} opacity={draw} />
+                <AnimatedPath
                   d={buildPath(item.values)}
                   stroke={item.color}
                   strokeWidth={2}
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  strokeDasharray={`${DRAW_LENGTH} ${DRAW_LENGTH}`}
+                  // Animated values are not part of react-native-svg's prop types.
+                  strokeDashoffset={dashOffset as unknown as number}
                 />
               </G>
             ))}
@@ -181,15 +214,15 @@ export function AreaChart({
                 key={`${label}_${index}`}
                 x={xFor(index)}
                 y={height - 6}
-                fontSize={10}
-                fill={activeIndex === index ? theme.colors.textMedium : theme.colors.textFaint}
+                fontSize={11}
+                fill={activeIndex === index ? theme.colors.text : theme.colors.textMuted}
                 textAnchor="middle"
               >
                 {label}
               </SvgText>
             ))}
 
-            <SvgText x={PADDING.left} y={PADDING.top - 3} fontSize={10} fill={theme.colors.textFaint}>
+            <SvgText x={PADDING.left} y={PADDING.top - 3} fontSize={11} fill={theme.colors.textMuted}>
               {format(maxValue)}
             </SvgText>
           </Svg>
@@ -204,7 +237,7 @@ export function AreaChart({
               theme.elevation.floating,
               {
                 backgroundColor: theme.colors.cardAlt,
-                borderColor: theme.colors.border,
+                borderColor: theme.colors.primary,
                 borderRadius: theme.radius.md,
                 // Keep the bubble inside the chart bounds.
                 left: Math.max(0, Math.min(Math.max(0, width - 150), xFor(activeIndex) - 70)),

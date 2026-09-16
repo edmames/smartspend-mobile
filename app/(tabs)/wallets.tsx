@@ -17,6 +17,7 @@ import { AppModal } from '../../src/components/ui/Modal';
 import { BottomSheet } from '../../src/components/ui/BottomSheet';
 import { ConfirmDialog } from '../../src/components/ui/ConfirmDialog';
 import { Button } from '../../src/components/ui/Button';
+import { Stagger } from '../../src/components/ui/Stagger';
 import { WalletCard } from '../../src/components/WalletCard';
 import { WalletForm } from '../../src/components/forms/WalletForm';
 import { useToast } from '../../src/components/ui/Toast';
@@ -140,16 +141,17 @@ export default function WalletsScreen() {
             />
           </Card>
         ) : (
-          sortedByBalance.map((wallet) => (
-            <WalletCard
-              key={wallet.id}
-              wallet={wallet}
-              balance={wallet.balance}
-              transactionCount={wallet.transactionCount}
-              share={walletsTotal > 0 ? Math.max(0, wallet.balance) / walletsTotal : 0}
-              onPress={() => router.push(`/wallet/${wallet.id}`)}
-              onLongPress={() => setMenuWallet(wallet)}
-            />
+          sortedByBalance.map((wallet, index) => (
+            <Stagger key={wallet.id} index={index}>
+              <WalletCard
+                wallet={wallet}
+                balance={wallet.balance}
+                transactionCount={wallet.transactionCount}
+                share={walletsTotal > 0 ? Math.max(0, wallet.balance) / walletsTotal : 0}
+                onPress={() => router.push(`/wallet/${wallet.id}`)}
+                onLongPress={() => setMenuWallet(wallet)}
+              />
+            </Stagger>
           ))
         )}
 

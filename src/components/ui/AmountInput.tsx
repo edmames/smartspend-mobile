@@ -4,11 +4,14 @@
  * Keeps the raw digits in state and renders them with thousand separators, so
  * decimals, letters and scientific notation can never be typed in the first
  * place. `parseAmountInput` still validates on submit (defence in depth).
- * The field is display-sized with a muted Rp prefix — the hero of the form.
+ *
+ * Typography: the figure is set in MONO_LG (18px monospace, tabular), so a
+ * column of amounts lines up and every digit is unambiguous while typing.
  */
+import { StyleSheet, type StyleProp, type TextStyle } from 'react-native';
 import { Input, type InputProps } from './Input';
 import { extractDigits, groupDigits, parseAmountInput } from '../../utils/formatting';
-import { useT } from '../../hooks/useTheme';
+import { useT, useTheme } from '../../hooks/useTheme';
 
 export interface AmountInputProps
   extends Omit<InputProps, 'value' | 'onChangeText' | 'keyboardType' | 'prefix'> {
@@ -21,6 +24,7 @@ export interface AmountInputProps
 
 export function AmountInput({ value, onChangeText, validateLive = false, error, helper, ...rest }: AmountInputProps) {
   const t = useT();
+  const theme = useTheme();
 
   const liveError = (() => {
     if (!validateLive) return undefined;
@@ -28,6 +32,10 @@ export function AmountInput({ value, onChangeText, validateLive = false, error, 
     const parsed = parseAmountInput(value);
     return parsed.ok ? undefined : t(`error.${parsed.error}` as never);
   })();
+
+  const amountStyle: StyleProp<TextStyle> = theme.monoFontFamily
+    ? [styles.amount, { fontFamily: theme.monoFontFamily }]
+    : styles.amount;
 
   return (
     <Input
@@ -41,8 +49,18 @@ export function AmountInput({ value, onChangeText, validateLive = false, error, 
       error={error ?? liveError}
       helper={helper}
       maxLength={20}
+      inputStyle={amountStyle}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  amount: {
+    fontSize: 18,
+    fontWeight: '600',
+    letterSpacing: 0,
+    fontVariant: ['tabular-nums'],
+  },
+});
 
 export default AmountInput;

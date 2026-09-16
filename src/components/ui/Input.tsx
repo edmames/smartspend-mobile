@@ -2,19 +2,22 @@
  * Text input with label, error/helper states, optional icon slots and a
  * password visibility toggle.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Pressable,
   StyleSheet,
   TextInput,
   View,
   type StyleProp,
   type TextInputProps,
+  type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { AppText } from './AppText';
 import { Icon, type IconName } from './Icon';
+import { useReducedMotion, useShake } from '../../utils/motion';
 
 export interface InputProps extends Omit<TextInputProps, 'style'> {
   label?: string;
@@ -24,6 +27,8 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   rightIcon?: IconName;
   onRightIconPress?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
+  /** Styles applied to the inner text input (money entry uses the mono face). */
+  inputStyle?: StyleProp<TextStyle>;
   /** Prefix rendered inside the field (e.g. "Rp"). */
   prefix?: string;
   suffix?: string;
@@ -37,6 +42,7 @@ export function Input({
   rightIcon,
   onRightIconPress,
   containerStyle,
+  inputStyle,
   prefix,
   suffix,
   secureTextEntry,
@@ -45,32 +51,44 @@ export function Input({
 }: InputProps) {
   const theme = useTheme();
   const { colors, radius, spacing, fontSize } = theme;
+  const reduced = useReducedMotion();
   const [focused, setFocused] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  /** Focus lift: 100% → 102%, smoothly, and never when motion is reduced. */
+  const scale = useRef(new Animated.Value(1)).current;
+  /** A rejected value shakes the whole field, not just the message below it. */
+  const shake = useShake(error);
+
+  useEffect(() => {
+    const toValue = focused && !reduced ? 1.02 : 1;
+    Animated.timing(scale, { toValue, duration: 150, useNativeDriver: true }).start();
+  }, [focused, reduced, scale]);
 
   const isPassword = Boolean(secureTextEntry);
   const borderColor = error ? colors.danger : focused ? colors.primary : colors.border;
+  /** 1px hairline at rest, 2px accent on focus — padding absorbs the extra px. */
+  const borderWidth = focused || error ? 2 : 1;
+  const horizontalPadding = spacing.lg - (borderWidth - 1);
 
   return (
-    <View style={[{ marginBottom: spacing.md }, containerStyle]}>
+    <Animated.View style={[{ marginBottom: spacing.md }, containerStyle, shake]}>
       {label ? (
         <AppText variant="micro" tone="faint" style={{ marginBottom: 6, textTransform: 'uppercase' }}>
           {label}
         </AppText>
       ) : null}
 
-      <View
+      <Animated.View
         style={[
           styles.field,
           {
             backgroundColor: colors.inputBackground,
             borderRadius: radius.md,
             borderColor,
-            // Hairline at rest; the focus ring is a tinted underlay instead of a
-            // thicker border, so the field never nudges or reflows on focus.
-            borderWidth: 1,
-            paddingHorizontal: spacing.lg,
+            borderWidth,
+            paddingHorizontal: horizontalPadding,
             opacity: editable ? 1 : theme.opacity.disabled,
+            transform: [{ scale }],
           },
           focused ? styles.focusRing : null,
           focused && error ? { backgroundColor: `${colors.danger}0d` } : null,
@@ -81,7 +99,7 @@ export function Input({
         ) : null}
 
         {prefix ? (
-          <AppText variant="body" weight="semibold" tone="muted" style={{ marginRight: 6 }}>
+          <AppText variant="small" weight="semibold" tone="muted" style={{ marginRight: 6 }}>
             {prefix}
           </AppText>
         ) : null}
@@ -104,6 +122,7 @@ export function Input({
             styles.input,
             { color: colors.text, fontSize: fontSize.bodyLarge },
             rest.multiline ? { minHeight: 80, paddingTop: spacing.sm, textAlignVertical: 'top' } : null,
+            inputStyle,
           ]}
         />
 
@@ -122,7 +141,7 @@ export function Input({
             <Icon name={rightIcon} size={18} color={colors.textMuted} />
           </Pressable>
         ) : null}
-      </View>
+      </Animated.View>
 
       {error ? (
         <View style={styles.messageRow}>
@@ -136,7 +155,7 @@ export function Input({
           {helper}
         </AppText>
       ) : null}
-    </View>
+    </Animated.View>
   );
 }
 

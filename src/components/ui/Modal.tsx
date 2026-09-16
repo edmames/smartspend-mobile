@@ -43,7 +43,7 @@ export function AppModal({
   dismissOnBackdrop = true,
 }: AppModalProps) {
   const theme = useTheme();
-  const scale = useRef(new Animated.Value(0.94)).current;
+  const scale = useRef(new Animated.Value(0.9)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -84,15 +84,22 @@ export function AppModal({
           {title ? (
             <View style={[styles.header, { padding: theme.spacing.xl, paddingBottom: theme.spacing.md }]}>
               <View style={{ flex: 1 }}>
-                <AppText variant="subtitle">{title}</AppText>
+                <AppText variant="h3">{title}</AppText>
                 {subtitle ? (
-                  <AppText variant="small" tone="muted" style={{ marginTop: 3 }}>
+                  <AppText variant="body" tone="muted" style={{ marginTop: 3 }}>
                     {subtitle}
                   </AppText>
                 ) : null}
               </View>
-              <Pressable onPress={onClose} hitSlop={12} accessibilityLabel="Close">
-                <Icon name="close" size={22} color={theme.colors.textMuted} />
+              {/* Teal glyph, 44×44 hit area. */}
+              <Pressable
+                onPress={onClose}
+                hitSlop={11}
+                accessibilityLabel="Close"
+                accessibilityRole="button"
+                style={styles.closeButton}
+              >
+                <Icon name="close" size={20} color={theme.colors.primary} />
               </Pressable>
             </View>
           ) : null}
@@ -148,6 +155,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+  },
+  closeButton: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

@@ -57,7 +57,7 @@ export function ConfirmDialog({
           <Icon name={destructive ? 'alert-circle-outline' : 'information-circle-outline'} size={22} color={accent} />
         </View>
 
-        <AppText variant="subtitle" align="center">
+        <AppText variant="h3" align="center">
           {title}
         </AppText>
         {message ? (
@@ -68,7 +68,7 @@ export function ConfirmDialog({
 
         {children ? <View style={{ width: '100%', marginTop: theme.spacing.lg }}>{children}</View> : null}
 
-        <View style={{ flexDirection: 'row', gap: theme.spacing.md, marginTop: theme.spacing.xl, width: '100%' }}>
+        <View style={{ flexDirection: 'row', gap: theme.spacing.lg, marginTop: theme.spacing.xl, width: '100%' }}>
           <Button label={cancelLabel} variant="secondary" onPress={onCancel} disabled={loading} style={{ flex: 1 }} />
           <Button
             label={confirmLabel}

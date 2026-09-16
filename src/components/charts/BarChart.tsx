@@ -4,12 +4,16 @@
  * Each bar sits on a faint full-height track so an empty day still reads as a
  * data point instead of a gap; only the baseline is drawn, no mid gridlines.
  */
-import { useState } from 'react';
-import { StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { G, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { useTheme, useLanguage } from '../../hooks/useTheme';
 import { AppText } from '../ui/AppText';
+import { motion } from '../../styles/theme';
+import { useReducedMotion } from '../../utils/motion';
 import { formatCompactCurrency } from '../../utils/formatting';
+
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 export interface BarSeries {
   label: string;
@@ -43,7 +47,24 @@ export function BarChart({
 }: BarChartProps) {
   const theme = useTheme();
   const language = useLanguage();
+  const reduced = useReducedMotion();
   const [width, setWidth] = useState(0);
+
+  /* Bars grow up from the baseline once, over 1000ms. */
+  const grow = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) {
+      grow.setValue(1);
+      return;
+    }
+    grow.setValue(0);
+    Animated.timing(grow, {
+      toValue: 1,
+      duration: motion.chartDraw,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [grow, reduced]);
 
   const groups = Math.max(labels.length, 1);
   const maxValue = Math.max(1, ...series.flatMap((item) => item.values));
@@ -95,12 +116,13 @@ export function BarChart({
                     const barHeight = value <= 0 ? 0 : Math.max(1.5, (value / maxValue) * chartHeight);
                     const x = startX + seriesIndex * (barWidth + barGap);
                     return (
-                      <Rect
+                      <AnimatedRect
                         key={`${item.label}_${groupIndex}`}
                         x={x}
-                        y={baseline - barHeight}
+                        // Animated values are not part of react-native-svg's prop types.
+                        y={grow.interpolate({ inputRange: [0, 1], outputRange: [baseline, baseline - barHeight] }) as unknown as number}
                         width={barWidth}
-                        height={barHeight}
+                        height={grow.interpolate({ inputRange: [0, 1], outputRange: [0, barHeight] }) as unknown as number}
                         rx={rounded}
                         fill={item.color}
                       />
@@ -111,8 +133,8 @@ export function BarChart({
                     <SvgText
                       x={groupX + groupWidth / 2}
                       y={height - 4}
-                      fontSize={10}
-                      fill={theme.colors.textFaint}
+                      fontSize={11}
+                      fill={theme.colors.textMuted}
                       textAnchor="middle"
                     >
                       {label}
@@ -122,7 +144,7 @@ export function BarChart({
               );
             })}
 
-            <SvgText x={PADDING.left} y={PADDING.top - 3} fontSize={10} fill={theme.colors.textFaint}>
+            <SvgText x={PADDING.left} y={PADDING.top - 3} fontSize={11} fill={theme.colors.textMuted}>
               {formatCompactCurrency(maxValue, language)}
             </SvgText>
           </Svg>

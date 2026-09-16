@@ -1,7 +1,9 @@
 /**
- * Chip / Badge — filter pills and status badges. Selected chips are solid
- * accent fills (high contrast on dark); idle chips are tonal fills with a
- * hairline edge so filter rows stay calm when many are present.
+ * Chip / Badge — filter pills and status badges.
+ *
+ * Selected chips use the accent tint plus a 1px accent border and accent text
+ * (the "ACCENT_SUBTLE" treatment); idle chips are neutral tonal fills with a
+ * hairline edge, so filter rows stay calm when many are present.
  */
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
@@ -37,8 +39,8 @@ export function Chip({
 }: ChipProps) {
   const theme = useTheme();
   const accent = color ?? theme.colors.primary;
-  const press = usePressScale(0.96);
-  const height = size === 'sm' ? 30 : 34;
+  const press = usePressScale(0.95);
+  const height = size === 'sm' ? 28 : 32;
 
   return (
     <Pressable
@@ -56,11 +58,11 @@ export function Chip({
         styles.base,
         {
           height,
-          backgroundColor: selected ? accent : theme.colors.chipTint,
+          backgroundColor: selected ? theme.colors.accentSoft : theme.colors.chipTint,
           borderRadius: theme.radius.pill,
           paddingHorizontal: size === 'sm' ? 12 : 14,
-          borderWidth: selected ? 0 : 1,
-          borderColor: theme.colors.border,
+          borderWidth: 1,
+          borderColor: selected ? accent : theme.colors.border,
           opacity: disabled ? theme.opacity.disabled : 1,
         },
         press.style,
@@ -71,22 +73,18 @@ export function Chip({
         <Icon
           name={icon}
           size={13}
-          color={selected ? theme.colors.onPrimary : theme.colors.textMuted}
+          color={selected ? accent : theme.colors.textMuted}
           style={{ marginRight: label ? 6 : 0 }}
         />
       ) : null}
-      <AppText
-        variant={size === 'sm' ? 'small' : 'small'}
-        weight="semibold"
-        color={selected ? theme.colors.onPrimary : theme.colors.textMedium}
-      >
+      <AppText variant="small" weight="semibold" color={selected ? accent : theme.colors.textMedium}>
         {label}
       </AppText>
       {typeof count === 'number' ? (
         <AppText
           variant="caption"
           tabular
-          color={selected ? theme.colors.onPrimary : theme.colors.textFaint}
+          color={selected ? accent : theme.colors.textFaint}
           style={{ marginLeft: 6, opacity: 0.85 }}
         >
           {String(count)}
