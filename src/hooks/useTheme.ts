@@ -6,7 +6,8 @@ import { useColorScheme } from 'react-native';
 import { useSettingsStore } from '../store/settingsStore';
 import { getTheme, resolveThemeMode, type ResolvedThemeMode, type Theme } from '../styles/theme';
 import { translate, type TranslationKey } from '../utils/constants';
-import type { Language } from '../types';
+import { amountToneOf } from '../utils/formatting';
+import type { Language, TransactionType } from '../types';
 
 export function useThemeMode(): ResolvedThemeMode {
   const preference = useSettingsStore((state) => state.settings.theme);
@@ -28,6 +29,31 @@ export function useLanguage(): Language {
 export function useT(): (key: TranslationKey) => string {
   const language = useLanguage();
   return useMemo(() => (key: TranslationKey) => translate(key, language), [language]);
+}
+
+/**
+ * Ledger ink for a transaction type, from the central semantic tokens.
+ *
+ * Every amount in the app goes through here, so income/expense/savings/transfer
+ * can never drift apart between the list, the detail screen and the reports.
+ * Savings is deliberately its own tone rather than reusing expense: a deposit
+ * shrinks one wallet without spending anything.
+ */
+export function useAmountColor(type: TransactionType | undefined): string {
+  const theme = useTheme();
+  return useMemo(() => {
+    // `undefined` (transaction still loading) falls through to neutral ink.
+    switch (type ? amountToneOf(type) : 'transfer') {
+      case 'income':
+        return theme.colors.incomeColor;
+      case 'expense':
+        return theme.colors.expenseColor;
+      case 'savings':
+        return theme.colors.savingsColor;
+      default:
+        return theme.colors.transferColor;
+    }
+  }, [theme, type]);
 }
 
 /** Convenience hook returning everything a screen usually needs. */

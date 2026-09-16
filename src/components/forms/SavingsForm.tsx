@@ -2,12 +2,14 @@
  * Create / edit a savings target.
  * Edits may change the name, the goal amount and the due date — the goal may be
  * raised or lowered even after money has been set aside.
+ *
+ * The due date is genuinely optional: leaving it empty renders as "Tanpa
+ * tenggat" rather than as a missing value.
  */
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { MutationResult, SavingsTarget, SavingsTargetInput } from '../../types';
 import { useTheme, useT } from '../../hooks/useTheme';
-import { todayISO } from '../../utils/date';
 import { parseAmountInput } from '../../utils/formatting';
 import { validateSavingsTargetInput } from '../../utils/validation';
 import { AppText } from '../ui/AppText';
@@ -34,6 +36,15 @@ export function SavingsForm({ initial, targets, onSubmit, onCancel }: SavingsFor
   const [dueDate, setDueDate] = useState<string | undefined>(initial?.dueDate);
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
   const [submitting, setSubmitting] = useState(false);
+
+  /**
+   * The submit button only lights up once there is something valid to save:
+   * a non-empty name and a positive goal. Without this an empty form looks
+   * ready and the user only finds out after tapping (the amount field shows
+   * "Rp 0", which reads like a value that is already filled in).
+   */
+  const parsedGoal = goalDigits ? parseAmountInput(goalDigits) : null;
+  const canSubmit = name.trim().length > 0 && Boolean(parsedGoal?.ok) && !submitting;
 
   const handleSubmit = async () => {
     setErrors({});
@@ -129,6 +140,7 @@ export function SavingsForm({ initial, targets, onSubmit, onCancel }: SavingsFor
           label={isEditing ? t('common.save_changes') : t('common.save')}
           onPress={handleSubmit}
           loading={submitting}
+          disabled={!canSubmit}
           icon="checkmark"
           style={{ flex: 1.4 }}
         />
@@ -136,8 +148,6 @@ export function SavingsForm({ initial, targets, onSubmit, onCancel }: SavingsFor
     </View>
   );
 }
-
-export { todayISO };
 
 const styles = StyleSheet.create({
   actions: {

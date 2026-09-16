@@ -21,7 +21,16 @@ import {
   walletBalanceMap,
 } from '../src/utils/calculations';
 import { isValidISODate, isFutureDate, todayISO, trailingMonths, addDaysISO, daysUntil, monthYearOf } from '../src/utils/date';
-import { extractDigits, formatCurrency, formatCompactCurrency, formatSignedCurrency, groupDigits, parseAmountInput } from '../src/utils/formatting';
+import {
+  amountToneOf,
+  directionOf,
+  extractDigits,
+  formatCurrency,
+  formatCompactCurrency,
+  formatSignedCurrency,
+  groupDigits,
+  parseAmountInput,
+} from '../src/utils/formatting';
 import { validateLedger } from '../src/services/ledger.service';
 import { buildBackupPayload, buildMonthlyReport, mergeById, validateBackupPayload } from '../src/services/export.service';
 import { validateBudgetInput, validateTransactionInput, validateWalletInput } from '../src/utils/validation';
@@ -185,6 +194,40 @@ const beforeTransfer = calculateTotalMoney(
 const afterTransfer = calculateTotalMoney(ledger, wallets, targets).total;
 equal('transfer keeps total money constant', afterTransfer, beforeTransfer);
 
+/*
+ * A savings deposit shrinks the source wallet and grows the target by the same
+ * amount, so total money is untouched. It is an asset move, not spending — this
+ * is the invariant that stops a deposit being reported as an expense.
+ */
+const beforeDeposit = calculateTotalMoney(
+  ledger.filter((row) => row.id !== 't_deposit'),
+  wallets,
+  targets,
+).total;
+const afterDeposit = calculateTotalMoney(ledger, wallets, targets).total;
+equal('savings deposit keeps total money constant', afterDeposit, beforeDeposit);
+equal('savings deposit moves exactly its amount', walletBalance(ledger, 'w_bank') + savingsBalance(ledger, 's_emergency'), 9_000_000 + 1_500_000);
+
+/* The same holds in reverse for a withdrawal. */
+const beforeWithdraw = calculateTotalMoney(
+  ledger.filter((row) => row.id !== 't_withdraw'),
+  wallets,
+  targets,
+).total;
+const afterWithdraw = calculateTotalMoney(ledger, wallets, targets).total;
+equal('savings withdrawal keeps total money constant', afterWithdraw, beforeWithdraw);
+
+/* The presentation layer must agree: a deposit is never "out"/expense ink. */
+equal('deposit direction is neutral', directionOf('savings_deposit'), 'neutral');
+equal('withdrawal direction is neutral', directionOf('savings_withdraw'), 'neutral');
+equal('income direction is in', directionOf('income'), 'in');
+equal('expense direction is out', directionOf('expense'), 'out');
+equal('transfer direction is neutral', directionOf('transfer'), 'neutral');
+equal('opening balance direction is neutral', directionOf('initial'), 'neutral');
+equal('deposit tone is savings', amountToneOf('savings_deposit'), 'savings');
+equal('withdrawal tone is savings', amountToneOf('savings_withdraw'), 'savings');
+equal('transfer tone is transfer', amountToneOf('transfer'), 'transfer');
+
 /* -------------------------------------------------------------------------- */
 /*                           4. Monthly aggregation                           */
 /* -------------------------------------------------------------------------- */
@@ -196,6 +239,11 @@ equal('expense excludes savings moves', august.expense, 900_000);
 equal('net cash flow', august.net, 6_100_000);
 equal('savings in/out tracked separately', [august.savingsIn, august.savingsOut], [2_000_000, 500_000]);
 equal('monthly rows counted (all types)', august.transactionCount, 9);
+
+/* Savings activity must not leak into the monthly cash-flow figures. */
+equal('savings deposit is not an expense', august.expense, 900_000);
+equal('savings withdrawal is not income', august.income, 7_000_000);
+equal('net cash flow ignores savings entirely', august.net, august.income - august.expense);
 
 const daily = calculateDailyCashFlow(ledger, '2026-08');
 equal('daily rows = days in month', daily.length, 31);

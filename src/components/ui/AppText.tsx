@@ -34,7 +34,12 @@ export type TextTone =
   | 'success'
   | 'warning'
   | 'danger'
-  | 'onPrimary';
+  /** Ink for a bright primary *fill* (buttons, FAB). */
+  | 'onPrimary'
+  /** Ink for the dark `HeroCard` gradient — light in both themes. */
+  | 'onHero'
+  | 'onHeroMuted'
+  | 'onHeroFaint';
 
 export interface AppTextProps extends RNTextProps {
   variant?: TextVariant | LegacyTextVariant;
@@ -72,6 +77,9 @@ export function AppText({
     warning: colors.warning,
     danger: colors.danger,
     onPrimary: colors.onPrimary,
+    onHero: colors.onHero,
+    onHeroMuted: colors.onHeroMuted,
+    onHeroFaint: colors.onHeroFaint,
   };
 
   const scale = type[resolved];

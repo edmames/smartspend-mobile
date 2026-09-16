@@ -173,7 +173,11 @@ export default function RegisterScreen() {
               icon="person-outline"
             />
 
-            <Pressable onPress={() => router.back()} style={{ marginTop: theme.spacing.lg, alignItems: 'center' }}>
+            <Pressable
+              onPress={() => router.back()}
+              accessibilityRole="link"
+              style={{ marginTop: theme.spacing.lg, alignItems: 'center' }}
+            >
               <AppText variant="small" tone="primary" weight="semibold">
                 {t('auth.to_login')}
               </AppText>

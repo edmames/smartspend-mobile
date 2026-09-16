@@ -95,29 +95,29 @@ export default function SavingsTargetDetailScreen() {
         <StackHeader title={t('savings.detail')} subtitle={target.name} fallbackRoute="/(tabs)/savings" />
 
         <HeroCard>
-          <AppText variant="small" tone="onPrimary" style={{ opacity: 0.85 }} numberOfLines={1}>
+          <AppText variant="small" weight="medium" tone="onHeroMuted" numberOfLines={1}>
             {target.name}
           </AppText>
           <View style={{ marginTop: theme.spacing.sm }}>
-            <Money value={progress.saved} size="hero" color="#ffffff" />
+            <Money value={progress.saved} size="hero" color={theme.colors.onHero} />
           </View>
-          <AppText variant="caption" tone="onPrimary" style={{ opacity: 0.85, marginTop: 2 }}>
+          <AppText variant="caption" tone="onHeroFaint" style={{ marginTop: 2 }}>
             {`${t('common.of')} ${formatCurrency(target.goalAmount)}`}
           </AppText>
 
           <ProgressBar
             ratio={progress.ratio}
             color={theme.colors.primaryBright}
-            trackColor="rgba(255,255,255,0.25)"
+            trackColor={theme.colors.onHeroDivider}
             height={9}
             style={{ marginTop: theme.spacing.lg }}
           />
 
           <View style={[styles.heroFooter, { marginTop: theme.spacing.sm }]}>
-            <AppText variant="caption" tone="onPrimary" style={{ opacity: 0.9 }}>
+            <AppText variant="caption" tone="onHeroMuted">
               {`${formatPercentage(progress.percentage, 0)} ${t('common.progress').toLowerCase()}`}
             </AppText>
-            <AppText variant="caption" tone="onPrimary" style={{ opacity: 0.9 }}>
+            <AppText variant="caption" tone="onHeroMuted">
               {progress.isComplete
                 ? t('savings.completed')
                 : `${t('savings.remaining')} ${formatCurrency(progress.remaining)}`}

@@ -48,11 +48,12 @@ export function StatTile({ label, value, icon, tone = 'default', hint, style, ba
           <Icon
             name={icon}
             size={12}
-            color={bare ? 'rgba(255,255,255,0.7)' : theme.colors.textFaint}
+            color={bare ? theme.colors.onHeroFaint : theme.colors.textFaint}
             style={{ marginRight: 5 }}
           />
         ) : null}
-        <AppText variant="micro" tone={bare ? 'onPrimary' : 'faint'} style={bare ? { opacity: 0.8 } : undefined}>
+        {/* `bare` means the tile sits on a HeroCard ramp, so it takes hero ink. */}
+        <AppText variant="micro" tone={bare ? 'onHeroMuted' : 'faint'}>
           {label.toUpperCase()}
         </AppText>
       </View>
@@ -61,7 +62,7 @@ export function StatTile({ label, value, icon, tone = 'default', hint, style, ba
         variant="subtitle"
         weight="bold"
         tabular
-        color={bare ? theme.colors.onPrimary : accent[tone]}
+        color={bare ? theme.colors.onHero : accent[tone]}
         style={{ marginTop: 5 }}
         numberOfLines={1}
       >
@@ -69,7 +70,7 @@ export function StatTile({ label, value, icon, tone = 'default', hint, style, ba
       </AppText>
 
       {hint ? (
-        <AppText variant="caption" tone={bare ? 'onPrimary' : 'muted'} style={{ marginTop: 2, opacity: bare ? 0.8 : 1 }}>
+        <AppText variant="caption" tone={bare ? 'onHeroFaint' : 'muted'} style={{ marginTop: 2 }}>
           {hint}
         </AppText>
       ) : null}

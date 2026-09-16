@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme, useT, useLanguage } from '../../src/hooks/useTheme';
+import { useTheme, useT, useLanguage, useAmountColor } from '../../src/hooks/useTheme';
 import { useTransactionStore } from '../../src/store/transactionStore';
 import { useTransactions } from '../../src/hooks/useTransactions';
 import { useWallets } from '../../src/hooks/useWallets';
@@ -45,6 +45,8 @@ export default function TransactionDetailScreen() {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  // Called before the not-found guard below so the hook order never changes.
+  const amountColor = useAmountColor(transaction?.type);
 
   const walletName = (id?: string) => wallets.find((wallet) => wallet.id === id)?.name ?? '—';
   const targetName = (id?: string) => targets.find((target) => target.id === id)?.name ?? '—';
@@ -66,6 +68,27 @@ export default function TransactionDetailScreen() {
   const destinationWallet = wallets.find((wallet) => wallet.id === transaction.walletDestinationId);
   const walletRef =
     transaction.type === 'income' ? (destinationWallet ?? sourceWallet) : (sourceWallet ?? destinationWallet);
+
+  /*
+   * Hero hierarchy. The ramp is dark in both themes, so the ink is always light
+   * (never `onPrimary`, which is dark in dark mode) — and the amount carries the
+   * semantic colour from the central ledger tokens. Savings movements are an
+   * asset move, so they get the savings ink and no sign: nothing was spent.
+   */
+  const sign = direction === 'in' ? '+ ' : direction === 'out' ? '− ' : '';
+  const heroAmountColor = amountColor;
+  const typeLabel = t(typeKey as never);
+  const heroTitle =
+    isSavingsMovement && targetName(transaction.savingsTargetId)
+      ? `${typeLabel} — ${targetName(transaction.savingsTargetId)}`
+      : typeLabel;
+  const maskedId = `•••• ${transaction.id.slice(-4).toUpperCase()}`;
+  const heroCaption =
+    transaction.description.trim() ||
+    // Savings rows read money → destination; everything else names its category.
+    (isSavingsMovement
+      ? `${walletName(transaction.walletSourceId)} → ${targetName(transaction.savingsTargetId)}`
+      : t(`category.${transaction.category}` as never));
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -145,23 +168,29 @@ export default function TransactionDetailScreen() {
             ) : (
               <IconBadge
                 name={categoryMeta.icon as never}
-                color="#ffffff"
-                background="rgba(255,255,255,0.18)"
+                color={theme.colors.onHero}
+                background={theme.colors.onHeroDivider}
                 containerSize={42}
                 size={20}
               />
             )}
-            <AppText variant="small" tone="onPrimary" style={{ opacity: 0.9, marginLeft: 10, flex: 1 }} numberOfLines={1}>
-              {t(typeKey as never)}
+            <AppText variant="small" weight="medium" tone="onHero" style={{ marginLeft: 10, flex: 1 }} numberOfLines={1}>
+              {heroTitle}
             </AppText>
           </View>
 
-          <AppText variant="hero" color={theme.colors.onPrimary} style={{ marginTop: theme.spacing.md }} numberOfLines={1} adjustsFontSizeToFit>
-            {`${direction === 'in' ? '+ ' : direction === 'out' ? '− ' : ''}${formatCurrency(transaction.amount)}`}
+          <AppText
+            variant="hero"
+            color={heroAmountColor}
+            style={{ marginTop: theme.spacing.md }}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
+            {`${sign}${formatCurrency(transaction.amount)}`}
           </AppText>
 
-          <AppText variant="small" tone="onPrimary" style={{ opacity: 0.9, marginTop: 4 }} numberOfLines={2}>
-            {transaction.description.trim() ? transaction.description : t(`category.${transaction.category}` as never)}
+          <AppText variant="small" tone="onHeroMuted" style={{ marginTop: 4 }} numberOfLines={2}>
+            {heroCaption}
           </AppText>
         </HeroCard>
 
@@ -191,10 +220,16 @@ export default function TransactionDetailScreen() {
         </Card>
 
         <Card variant="outlined" style={{ marginTop: theme.spacing.lg }}>
-          <AppText variant="caption" tone="muted">
-            {`ID: ${transaction.id}`}
+          {/*
+           * The full id is an implementation detail ("txn_mu3cento7gx5xkbu").
+           * It stays on screen for support, but masked down to its last four
+           * characters so it reads as a reference rather than as the headline
+           * content of the card.
+           */}
+          <AppText variant="caption" tone="faint">
+            {`${t('transaction.id_label')} · ${maskedId}`}
           </AppText>
-          <AppText variant="caption" tone="muted" style={{ marginTop: 2 }}>
+          <AppText variant="caption" tone="faint" style={{ marginTop: 2 }}>
             {`${t('wallet.created_at')}: ${formatDateLong(transaction.createdAt.slice(0, 10), language)}`}
           </AppText>
           <View style={[styles.noteRow, { marginTop: theme.spacing.sm }]}>

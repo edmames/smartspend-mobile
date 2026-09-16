@@ -14,6 +14,7 @@ import type { CategoryKey } from '../../types';
 import { CATEGORY_META } from '../../utils/constants';
 import { haptics } from '../../utils/haptics';
 import { useReducedMotion } from '../../utils/motion';
+import { withAlpha } from '../../utils/color';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 
@@ -103,13 +104,14 @@ function CategoryTile({
           style={[
             styles.iconChip,
             {
-              backgroundColor: selected ? color : theme.colors.accentSoft,
-              borderWidth: selected ? 0 : 1,
-              borderColor: theme.colors.border,
+              backgroundColor: selected ? withAlpha(color, 0.22) : theme.colors.accentSoft,
+              borderWidth: 1,
+              borderColor: selected ? withAlpha(color, 0.45) : theme.colors.border,
             },
           ]}
         >
-          <Icon name={icon} size={20} color={selected ? '#ffffff' : theme.colors.textMuted} />
+          {/* Semantic category ink stays readable in both themes. */}
+          <Icon name={icon} size={20} color={selected ? color : theme.colors.textMuted} />
         </View>
 
         <AppText
@@ -130,8 +132,10 @@ function CategoryTile({
           StyleSheet.absoluteFill,
           styles.tileSurface,
           {
-            backgroundColor: selected ? theme.colors.accentSoft : theme.colors.chipTint,
-            borderColor: selected ? color : 'transparent',
+            backgroundColor: selected ? withAlpha(color, 0.14) : theme.colors.chipTint,
+            // Restrained: a hint of the category hue, not a full-saturation
+            // outline, so a selected tile is obvious without shouting.
+            borderColor: selected ? withAlpha(color, 0.45) : 'transparent',
             opacity: pressed ? 0.85 : 1,
           },
         ]}

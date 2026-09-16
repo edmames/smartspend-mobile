@@ -83,6 +83,19 @@ export interface ThemeColors {
   textMuted: string;
   textFaint: string;
   textInverse: string;
+  /**
+   * Ink for content sitting on a `HeroCard` gradient.
+   *
+   * The hero ramp is dark in *both* themes, so these are always light — unlike
+   * `onPrimary`, which is the ink for a bright teal *fill* and is near-black in
+   * dark mode. Using `onPrimary` on a hero is what made hero captions vanish
+   * into the card.
+   */
+  onHero: string;
+  onHeroMuted: string;
+  onHeroFaint: string;
+  /** Rules, dividers and progress tracks on a hero ramp. */
+  onHeroDivider: string;
 
   primary: string;
   /** Softer partner of `primary` for large fills / gradients. */
@@ -131,6 +144,11 @@ export const darkThemeColors: ThemeColors = {
   textMuted: palette.night400,
   textFaint: '#6b7280',
   textInverse: palette.night900,
+
+  onHero: '#ffffff',
+  onHeroMuted: 'rgba(255, 255, 255, 0.72)',
+  onHeroFaint: 'rgba(255, 255, 255, 0.56)',
+  onHeroDivider: 'rgba(255, 255, 255, 0.18)',
 
   primary: palette.teal,
   primaryDeep: palette.tealDeep,
@@ -215,6 +233,12 @@ export const lightThemeColors: ThemeColors = {
   textMuted: '#68758c',
   textFaint: '#94a1b8',
   textInverse: palette.white,
+
+  // Identical to dark: the hero ramp is a dark teal in both themes.
+  onHero: '#ffffff',
+  onHeroMuted: 'rgba(255, 255, 255, 0.78)',
+  onHeroFaint: 'rgba(255, 255, 255, 0.62)',
+  onHeroDivider: 'rgba(255, 255, 255, 0.22)',
 
   primary: palette.tealDeep,
   primaryDeep: '#0f766e',

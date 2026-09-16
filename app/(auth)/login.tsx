@@ -121,6 +121,7 @@ export default function LoginScreen() {
 
             <Pressable
               onPress={() => router.push('/(auth)/register')}
+              accessibilityRole="link"
               style={{ marginTop: theme.spacing.lg, alignItems: 'center' }}
             >
               <AppText variant="small" tone="primary" weight="semibold">

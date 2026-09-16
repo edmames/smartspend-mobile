@@ -189,16 +189,49 @@ export function categoryIcon(category: CategoryKey): string {
 }
 
 /** Direction of a ledger entry for coloring purposes. */
+/**
+ * How a transaction moves the user's **total wealth** (wallets + savings).
+ *
+ * Only real income adds wealth and only a real expense removes it. Transfers and
+ * savings movements move money between the user's own pockets: one balance goes
+ * down while another goes up by the same amount, so net worth is untouched.
+ *
+ * This is why `savings_deposit` is NOT `out` even though the source wallet
+ * shrinks: showing it in expense red would tell the user they spent money they
+ * still have. Direction here drives colour and sign, so it has to describe the
+ * effect on wealth, not the effect on one wallet.
+ */
 export function directionOf(type: TransactionType): 'in' | 'out' | 'neutral' {
   switch (type) {
     case 'income':
-    case 'savings_withdraw':
       return 'in';
     case 'expense':
-    case 'savings_deposit':
       return 'out';
     default:
       return 'neutral';
+  }
+}
+
+/**
+ * Semantic tone for an amount, so every surface colour-codes identically.
+ *   income   → green   (wealth up)
+ *   expense  → coral   (wealth down)
+ *   savings  → cyan    (asset movement, wallet ⇄ target)
+ *   transfer → violet  (asset movement, wallet ⇄ wallet, opening balance)
+ */
+export type AmountTone = 'income' | 'expense' | 'savings' | 'transfer';
+
+export function amountToneOf(type: TransactionType): AmountTone {
+  switch (type) {
+    case 'income':
+      return 'income';
+    case 'expense':
+      return 'expense';
+    case 'savings_deposit':
+    case 'savings_withdraw':
+      return 'savings';
+    default:
+      return 'transfer';
   }
 }
 

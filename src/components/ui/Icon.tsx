@@ -6,6 +6,7 @@
  */
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ColorValue, StyleProp, TextStyle } from 'react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 export type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -17,8 +18,14 @@ export interface IconProps {
   style?: StyleProp<TextStyle>;
 }
 
-export function Icon({ name, size = 20, color = '#e2e8f0', style }: IconProps) {
-  return <Ionicons name={name} size={size} color={color} style={style} />;
+/**
+ * Defaults to the theme's primary text colour. It used to default to a fixed
+ * near-white, which was invisible on the light theme for any icon whose caller
+ * relied on the default.
+ */
+export function Icon({ name, size = 20, color, style }: IconProps) {
+  const theme = useTheme();
+  return <Ionicons name={name} size={size} color={color ?? theme.colors.text} style={style} />;
 }
 
 /**

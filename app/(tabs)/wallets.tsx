@@ -23,6 +23,7 @@ import { WalletForm } from '../../src/components/forms/WalletForm';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency } from '../../src/utils/formatting';
 import { useListBottomPadding } from '../../src/utils/layout';
+import { progressFraction } from '../../src/utils/calculations';
 
 export default function WalletsScreen() {
   const theme = useTheme();
@@ -153,7 +154,9 @@ export default function WalletsScreen() {
                 wallet={wallet}
                 balance={wallet.balance}
                 transactionCount={wallet.transactionCount}
-                share={walletsTotal > 0 ? Math.max(0, wallet.balance) / walletsTotal : 0}
+                // One shared helper so the ratio can never drift from the
+                // dashboard's, and a zero/negative balance clamps to 0.
+                share={progressFraction(wallet.balance, walletsTotal)}
                 onPress={() => router.push(`/wallet/${wallet.id}`)}
                 onLongPress={() => setMenuWallet(wallet)}
               />

@@ -278,13 +278,12 @@ export function AreaChart({
   );
 }
 
-/** Default series colours (semantic, not decorative — ledger direction). */
-export const INCOME_COLOR = '#10b981';
-export const EXPENSE_COLOR = '#f87171';
-/** Transfer / neutral series (purple, matches the semantic transfer token). */
-export const TRANSFER_COLOR = '#8b5cf6';
-/** Secondary/other series (cyan, matches the savings token). */
-export const SAVINGS_COLOR = '#06b6d4';
+/*
+ * Series colours are not defined here. Callers pass them from the theme
+ * (`theme.colors.incomeColor`, `expenseColor`, …) so a chart is drawn in the
+ * active theme's ink. This module previously exported its own fixed hex values,
+ * which meant light mode was painted with the dark theme's brighter tones.
+ */
 
 const styles = StyleSheet.create({
   legend: {

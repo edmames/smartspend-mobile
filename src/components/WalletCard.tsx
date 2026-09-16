@@ -1,7 +1,10 @@
 /**
  * WalletCard — row-style card: type glyph, name + type, tabular balance.
- * An optional `share` ratio renders a 3px bar showing the wallet's slice of
- * total money, which turns a plain list into a comparison.
+ *
+ * An optional `share` ratio renders a thin bar comparing this wallet with the
+ * others. The ratio is the wallet's slice of the **sum of all wallet
+ * balances** (callers pass `progressFraction(balance, walletsTotal)`), not of
+ * total money — savings are a separate pot and would flatten every bar.
  */
 import { StyleSheet, View } from 'react-native';
 import { useTheme, useT } from '../hooks/useTheme';
@@ -23,7 +26,7 @@ export interface WalletCardProps {
   onLongPress?: () => void;
   /** Compact variant for dashboard "top wallets". */
   compact?: boolean;
-  /** 0..1 slice of total money (renders a thin bar when provided). */
+  /** 0..1 slice of the total wallet balance (renders a thin bar when provided). */
   share?: number;
 }
 
@@ -74,7 +77,9 @@ export function WalletCard({
           />
         </View>
 
-        {typeof share === 'number' ? (
+        {/* No bar for an empty wallet: a rounded-up sliver would read as a real
+            share of the total when the wallet actually holds nothing. */}
+        {typeof share === 'number' && share > 0 ? (
           <View
             style={[
               styles.shareTrack,
@@ -84,6 +89,8 @@ export function WalletCard({
             <View
               style={{
                 width: `${Math.max(2, Math.min(100, share * 100))}%`,
+                // Floor of 2% only applies to a non-zero share, so a sliver
+                // stays visible while a real zero renders nothing.
                 height: '100%',
                 borderRadius: 2,
                 backgroundColor: meta.color,

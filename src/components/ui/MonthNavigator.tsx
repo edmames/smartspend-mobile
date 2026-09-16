@@ -149,7 +149,13 @@ export function MonthPickerSheet({
   return (
     <BottomSheet visible={visible} onClose={onClose} title={String(year)} maxHeightRatio={0.7}>
       <View style={[styles.yearRow, { marginBottom: theme.spacing.md }]}>
-        <Pressable onPress={() => setYear((current) => current - 1)} hitSlop={10} style={styles.arrow}>
+        <Pressable
+          onPress={() => setYear((current) => current - 1)}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={`${year - 1}`}
+          style={styles.arrow}
+        >
           <Icon name="chevron-back" size={20} color={theme.colors.text} />
         </Pressable>
         <AppText variant="body" weight="semibold">
@@ -159,6 +165,9 @@ export function MonthPickerSheet({
           onPress={() => setYear((current) => Math.min(maxYear, current + 1))}
           disabled={year >= maxYear}
           hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={`${year + 1}`}
+          accessibilityState={{ disabled: year >= maxYear }}
           style={[styles.arrow, { opacity: year >= maxYear ? theme.opacity.disabled : 1 }]}
         >
           <Icon name="chevron-forward" size={20} color={theme.colors.text} />
@@ -171,9 +180,15 @@ export function MonthPickerSheet({
           const disabled = monthYear > maxMonth || (minMonth ? monthYear < minMonth : false);
           const selected = year === selectedYear && month === selectedMonth;
 
-          return (              <Pressable
+          return (
+            <Pressable
               key={monthYear}
               disabled={disabled}
+              // Screen readers announce the month name and its own state rather
+              // than the bare cell contents.
+              accessibilityRole="radio"
+              accessibilityState={{ selected, disabled }}
+              accessibilityLabel={formatMonthYear(monthYear, language)}
               onPress={() => {
                 haptics.selection();
                 onSelect(monthYear);

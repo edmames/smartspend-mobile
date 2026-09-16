@@ -72,6 +72,13 @@ export default function TransactionsScreen() {
 
   const [filterOpen, setFilterOpen] = useState(false);
   const [menuTarget, setMenuTarget] = useState<Transaction | null>(null);
+
+  /** True when anything other than the defaults is narrowing the list. */
+  const hasActiveFilters =
+    filters.query.trim().length > 0 ||
+    filters.type !== 'all' ||
+    filters.walletId !== 'all' ||
+    filters.category !== 'all';
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -275,6 +282,8 @@ export default function TransactionsScreen() {
           return (
             <TransactionRow
               transaction={item.transaction}
+              // Rows sit under a `DayGroupHeader`, so the date lives there.
+              showDate={false}
               sourceWalletName={walletName(item.transaction.walletSourceId)}
               destinationWalletName={walletName(item.transaction.walletDestinationId)}
               savingsTargetName={targetName(item.transaction.savingsTargetId)}
@@ -287,12 +296,18 @@ export default function TransactionsScreen() {
           );
         }}
         ListEmptyComponent={
+          /*
+           * Keyed off *any* active filter, not just the search query. Filtering
+           * by category or wallet could previously empty the list while the
+           * screen still said "no transactions yet" and offered to add one —
+           * hiding the fact that a filter was responsible.
+           */
           <EmptyState
             icon="receipt-outline"
-            title={filters.query ? t('transaction.no_results') : t('transaction.empty')}
-            message={filters.query ? undefined : t('transaction.empty_hint')}
-            actionLabel={filters.query ? t('common.reset') : t('transaction.add')}
-            onAction={() => (filters.query ? resetFilters() : router.push('/transaction/new'))}
+            title={hasActiveFilters ? t('transaction.no_results') : t('transaction.empty')}
+            message={hasActiveFilters ? undefined : t('transaction.empty_hint')}
+            actionLabel={hasActiveFilters ? t('common.reset') : t('transaction.add')}
+            onAction={() => (hasActiveFilters ? resetFilters() : router.push('/transaction/new'))}
           />
         }
         ListFooterComponent={
@@ -300,11 +315,14 @@ export default function TransactionsScreen() {
             <View style={{ paddingVertical: theme.spacing.lg }}>
               <ActivityIndicator color={theme.colors.primary} />
             </View>          ) : transactions.length > 0 ? (
-            /* The running total is a real readout, not fine print — body size,
-               secondary ink, and enough room to sit clear of the tab bar. */
+            /**
+             * Count only. The period's totals are already spelled out in the
+             * summary card above the list, so repeating the money here would be
+             * a second, differently-scoped number competing with it.
+             */
             <View style={{ paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.md }}>
               <AppText variant="small" weight="medium" tone="muted" align="center" tabular>
-                {`${formatCurrency(totals.net)} · ${transactions.length} ${t('transaction.found')}`}
+                {`${transactions.length} ${t('transaction.found')}`}
               </AppText>
             </View>
           ) : null}

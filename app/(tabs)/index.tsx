@@ -29,7 +29,12 @@ import { TransactionRow } from '../../src/components/TransactionRow';
 import { WalletCard } from '../../src/components/WalletCard';
 import { PieChart } from '../../src/components/charts/PieChart';
 import { SegmentedControl } from '../../src/components/ui/SegmentedControl';
-import { calculateCategoryBreakdown, calculateMonthlySummary, sortNewestFirst } from '../../src/utils/calculations';
+import {
+  calculateCategoryBreakdown,
+  calculateMonthlySummary,
+  progressFraction,
+  sortNewestFirst,
+} from '../../src/utils/calculations';
 import { currentMonthYear, formatMonthYear } from '../../src/utils/date';
 import { formatCurrency } from '../../src/utils/formatting';
 import { CATEGORY_META } from '../../src/utils/constants';
@@ -150,29 +155,29 @@ export default function DashboardScreen() {
           {/* Hero — the one number that matters, plus its composition.        */}
           {/* ---------------------------------------------------------------- */}
           <HeroCard style={{ marginTop: theme.spacing.md }}>
-            <AppText variant="micro" style={{ color: 'rgba(255,255,255,0.62)' }}>
+            <AppText variant="micro" tone="onHeroFaint">
               {t('dashboard.total_money').toUpperCase()}
             </AppText>
 
             <View style={{ marginTop: 6 }}>
-              <Money value={totalMoney} animatedValue={heroValue} size="hero" color="#ffffff" />
+              <Money value={totalMoney} animatedValue={heroValue} size="hero" color={theme.colors.onHero} />
             </View>
 
             <View style={[styles.heroSplit, { marginTop: theme.spacing.md }]}>
               <View style={{ flex: 1, minWidth: 0 }}>
-                <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.58)' }}>
+                <AppText variant="caption" tone="onHeroFaint">
                   {t('dashboard.wallets_total')}
                 </AppText>
-                <Money value={walletsTotal} size="subtitle" color="#ffffff" style={{ marginTop: 1 }} />
+                <Money value={walletsTotal} size="subtitle" color={theme.colors.onHero} style={{ marginTop: 1 }} />
               </View>
 
-              <View style={[styles.heroDivider, { backgroundColor: 'rgba(255,255,255,0.16)' }]} />
+              <View style={[styles.heroDivider, { backgroundColor: theme.colors.onHeroDivider }]} />
 
               <View style={{ flex: 1, minWidth: 0, paddingLeft: theme.spacing.lg }}>
-                <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.58)' }}>
+                <AppText variant="caption" tone="onHeroFaint">
                   {t('dashboard.savings_total')}
                 </AppText>
-                <Money value={savingsTotals.saved} size="subtitle" color="#ffffff" style={{ marginTop: 1 }} />
+                <Money value={savingsTotals.saved} size="subtitle" color={theme.colors.onHero} style={{ marginTop: 1 }} />
               </View>
             </View>
 
@@ -200,7 +205,7 @@ export default function DashboardScreen() {
               {/* No coloured markers here — direction is carried by the sign,
                   so the strip stays as quiet as the rest of the surface. */}
               <View style={styles.statCell}>
-                <AppText variant="caption" tone="faint" numberOfLines={1}>
+                <AppText variant="caption" tone="faint" numberOfLines={2} style={styles.statLabel}>
                   {t('dashboard.income')}
                 </AppText>
                 <Money value={summary.income} size="body" signed numberOfLines={1} />
@@ -209,7 +214,7 @@ export default function DashboardScreen() {
               <View style={[styles.vDivider, { backgroundColor: theme.colors.border }]} />
 
               <View style={styles.statCell}>
-                <AppText variant="caption" tone="faint" numberOfLines={1}>
+                <AppText variant="caption" tone="faint" numberOfLines={2} style={styles.statLabel}>
                   {t('dashboard.expense')}
                 </AppText>
                 {/* Negated so the sign reads "−", not "+" — expense is an outflow. */}
@@ -219,7 +224,7 @@ export default function DashboardScreen() {
               <View style={[styles.vDivider, { backgroundColor: theme.colors.border }]} />
 
               <View style={[styles.statCell, { alignItems: 'flex-end' }]}>
-                <AppText variant="caption" tone="faint" numberOfLines={1}>
+                <AppText variant="caption" tone="faint" numberOfLines={2} style={styles.statLabel}>
                   {t('dashboard.net')}
                 </AppText>
                 <Money value={summary.net} size="body" signed tone="auto" numberOfLines={1} />
@@ -228,11 +233,11 @@ export default function DashboardScreen() {
           </Card>
 
           {/* Budget alert — only when something is actually over budget. */}
-          {exceededBudgets > 0 ? (
-            <Pressable
-              onPress={() => router.push('/budget')}
-              style={[
-                styles.alert,
+          {exceededBudgets > 0 ? (          <Pressable
+            onPress={() => router.push('/budget')}
+            accessibilityRole="button"
+            accessibilityLabel={`${exceededBudgets} ${t('budget.exceeded_warning')}`}
+            style={[ styles.alert,
                 {
                   marginTop: theme.spacing.sm,
                   backgroundColor: `${theme.colors.danger}14`,
@@ -335,7 +340,9 @@ export default function DashboardScreen() {
                   <WalletCard
                     wallet={wallet}
                     balance={wallet.balance}
-                    share={walletsTotal > 0 ? Math.max(0, wallet.balance) / walletsTotal : 0}
+                    // Share of the total **wallet** balance (not total money),
+                    // clamped so a zero or negative wallet yields no bar.
+                    share={progressFraction(wallet.balance, walletsTotal)}
                     onPress={() => router.push(`/wallet/${wallet.id}`)}
                     compact
                   />
@@ -441,7 +448,18 @@ const styles = StyleSheet.create({
   statCell: {
     flex: 1,
     minWidth: 0,
-    paddingHorizontal: 14,
+    paddingHorizontal: 10,
+  },
+  /**
+   * Two lines are reserved for every label even when one would fit, so the
+   * three amounts stay on a shared baseline.
+   *
+   * The net column's label ("Arus kas bersih" / "Net cash flow") does not fit a
+   * third of a phone's width on one line at 12px, and clipping it to "Arus kas
+   * ber…" loses the one word that says what the number means.
+   */
+  statLabel: {
+    minHeight: 32,
   },
   vDivider: {
     width: StyleSheet.hairlineWidth,

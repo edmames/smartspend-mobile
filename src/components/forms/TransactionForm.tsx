@@ -500,6 +500,7 @@ export function TransactionForm({
       {!lockType && !isSavings && targets.length > 0 ? (
         <Pressable
           onPress={() => router.push('/(tabs)/savings')}
+          accessibilityRole="link"
           style={[
             styles.savingsLink,
             { backgroundColor: theme.colors.backgroundAlt, borderRadius: theme.radius.md, marginTop: theme.spacing.md },

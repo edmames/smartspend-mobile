@@ -10,7 +10,7 @@
  * Falls back to the category glyph when the caller has no wallet to hand.
  */
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useTheme, useT, useLanguage } from '../hooks/useTheme';
+import { useTheme, useT, useLanguage, useAmountColor } from '../hooks/useTheme';
 import type { Transaction, Wallet } from '../types';
 import { CATEGORY_META, TRANSACTION_TYPE_META } from '../utils/constants';
 import { formatRelativeDay } from '../utils/date';
@@ -66,22 +66,24 @@ export function TransactionRow({
 
   const categoryMeta = CATEGORY_META[transaction.category] ?? CATEGORY_META.other;
   const direction = directionOf(transaction.type);
-  // Ledger-direction colours: income green, coral expense — not alarm red.
-  const amountColor =
-    direction === 'in'
-      ? theme.colors.incomeColor
-      : direction === 'out'
-        ? theme.colors.expenseColor
-        : theme.colors.transferColor;
-
-  const title = transaction.description.trim()
-    ? transaction.description.trim()
-    : transaction.type === 'transfer'
-      ? t('transaction.transfer_between')
-      : t(TRANSACTION_TYPE_META[transaction.type].key as never);
+  const amountColor = useAmountColor(transaction.type);
 
   /* ----------------------------- leading mark ----------------------------- */
   const isSavingsMovement = transaction.type === 'savings_deposit' || transaction.type === 'savings_withdraw';
+
+  /* -------------------------------- title --------------------------------- */
+  const typeLabel = t(TRANSACTION_TYPE_META[transaction.type].key as never);
+  const description = transaction.description.trim();
+  /**
+   * A user-typed description always wins. Otherwise the type label carries the
+   * row, and savings movements name their target so the header is never a bare
+   * "Setor tabungan" with the destination left to the metadata line.
+   */
+  const title = description
+    ? description
+    : isSavingsMovement && savingsTargetName
+      ? `${typeLabel} — ${savingsTargetName}`
+      : typeLabel;
   // Money leaves the source wallet, so that is the wallet the row is "about";
   // for income the destination wallet is the one that received it.
   const walletRef =
@@ -89,7 +91,17 @@ export function TransactionRow({
   const markSize = compact ? 32 : 38;
 
   /* ------------------------------ meta line ------------------------------- */
+  /**
+   * Built as one string and rendered as a single text node.
+   *
+   * Each fragment used to be its own `numberOfLines={1}` node inside a flex row,
+   * so a narrow screen clipped every piece independently and the line came out
+   * as "Hari … · Tabun… · Sopipau → N…". One node means one clip, at the end,
+   * where the ellipsis actually reads as "there is more".
+   */
   const metaParts: string[] = [];
+  // Skipped when the caller already groups rows under a date heading, so the
+  // same date is not printed twice in a row.
   if (showDate) metaParts.push(formatRelativeDay(transaction.date, language));
   metaParts.push(t(`category.${transaction.category}` as never));
 
@@ -161,20 +173,14 @@ export function TransactionRow({
         <AppText variant={compact ? 'small' : 'body'} weight="medium" numberOfLines={1}>
           {title}
         </AppText>
-        <View style={[styles.metaRow, { marginTop: theme.spacing.xs }]}>
-          {metaParts.map((part, index) => (
-            <View key={`${part}_${index}`} style={styles.metaItem}>
-              {index > 0 ? (
-                <AppText variant={metaVariant} tone="faint" style={styles.metaSeparator}>
-                  ·
-                </AppText>
-              ) : null}
-              <AppText variant={metaVariant} tone="muted" numberOfLines={1} style={{ flexShrink: 1 }}>
-                {part}
-              </AppText>
-            </View>
-          ))}
-        </View>
+        <AppText
+          variant={metaVariant}
+          tone="muted"
+          numberOfLines={1}
+          style={{ marginTop: theme.spacing.xs }}
+        >
+          {metaParts.join(' · ')}
+        </AppText>
       </View>
 
       <AppText
@@ -232,13 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  metaSeparator: {
-    marginHorizontal: 4,
-  },
+
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',

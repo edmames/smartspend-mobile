@@ -21,7 +21,7 @@ import { MonthNavigator } from '../../src/components/ui/MonthNavigator';
 import { StatTile } from '../../src/components/ui/StatTile';
 import { BarChart } from '../../src/components/charts/BarChart';
 import { PieChart } from '../../src/components/charts/PieChart';
-import { AreaChart, EXPENSE_COLOR, INCOME_COLOR } from '../../src/components/charts/AreaChart';
+import { AreaChart } from '../../src/components/charts/AreaChart';
 import { useToast } from '../../src/components/ui/Toast';
 import {
   calculateBudgetUsage,
@@ -210,8 +210,8 @@ export default function ReportsScreen() {
               <BarChart
                 labels={daily.map((day) => String(Number(day.date.slice(8, 10))))}
                 series={[
-                  { label: t('report.in'), values: daily.map((day) => day.income), color: INCOME_COLOR },
-                  { label: t('report.out'), values: daily.map((day) => day.expense), color: EXPENSE_COLOR },
+                  { label: t('report.in'), values: daily.map((day) => day.income), color: theme.colors.incomeColor },
+                  { label: t('report.out'), values: daily.map((day) => day.expense), color: theme.colors.expenseColor },
                 ]}
                 height={140}
               />
@@ -319,8 +319,8 @@ export default function ReportsScreen() {
           <AreaChart
             labels={trend.map((point) => formatMonthShort(point.monthYear, language))}
             series={[
-              { label: t('dashboard.income'), values: trend.map((point) => point.income), color: INCOME_COLOR },
-              { label: t('dashboard.expense'), values: trend.map((point) => point.expense), color: EXPENSE_COLOR },
+              { label: t('dashboard.income'), values: trend.map((point) => point.income), color: theme.colors.incomeColor },
+              { label: t('dashboard.expense'), values: trend.map((point) => point.expense), color: theme.colors.expenseColor },
             ]}
           />
         </Card>

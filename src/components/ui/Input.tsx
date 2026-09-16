@@ -32,6 +32,8 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   /** Prefix rendered inside the field (e.g. "Rp"). */
   prefix?: string;
   suffix?: string;
+  /** Accessible name for the `rightIcon` button (icon-only controls need one). */
+  rightIconLabel?: string;
 }
 
 export function Input({
@@ -45,6 +47,7 @@ export function Input({
   inputStyle,
   prefix,
   suffix,
+  rightIconLabel,
   secureTextEntry,
   editable = true,
   ...rest
@@ -90,7 +93,9 @@ export function Input({
             opacity: editable ? 1 : theme.opacity.disabled,
             transform: [{ scale }],
           },
-          focused ? styles.focusRing : null,
+          // Focus glow uses the *resolved* accent, so light mode gets the deep
+          // teal rather than the dark theme's brighter one.
+          focused ? [styles.focusRing, { shadowColor: colors.primary, backgroundColor: `${colors.primary}12` }] : null,
           focused && error ? { backgroundColor: `${colors.danger}0d` } : null,
         ]}
       >
@@ -137,7 +142,14 @@ export function Input({
             <Icon name={revealed ? 'eye-off-outline' : 'eye-outline'} size={18} color={colors.textMuted} />
           </Pressable>
         ) : rightIcon ? (
-          <Pressable onPress={onRightIconPress} hitSlop={10} disabled={!onRightIconPress}>
+          <Pressable
+            onPress={onRightIconPress}
+            hitSlop={10}
+            disabled={!onRightIconPress}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !onRightIconPress }}
+            accessibilityLabel={rightIconLabel ?? label ?? 'Field action'}
+          >
             <Icon name={rightIcon} size={18} color={colors.textMuted} />
           </Pressable>
         ) : null}
@@ -166,8 +178,6 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   focusRing: {
-    backgroundColor: 'rgba(20, 184, 166, 0.07)',
-    shadowColor: '#14b8a6',
     shadowOpacity: 0.22,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 0 },

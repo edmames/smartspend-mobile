@@ -126,30 +126,30 @@ export default function WalletDetailScreen() {
         <HeroCard>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <WalletMark type={wallet.type} brand={wallet.brand} size={34} variant="solid" />
-            <AppText variant="micro" style={{ color: 'rgba(255,255,255,0.66)', marginLeft: 10 }}>
+            <AppText variant="micro" tone="onHeroFaint" style={{ marginLeft: 10 }}>
               {t('wallet.subtitle_total').toUpperCase()}
             </AppText>
           </View>
 
           <View style={{ marginTop: theme.spacing.md }}>
-            <Money value={wallet.balance} size="hero" color="#ffffff" />
+            <Money value={wallet.balance} size="hero" color={theme.colors.onHero} />
           </View>
 
-          <Divider style={{ backgroundColor: 'rgba(255,255,255,0.14)', marginVertical: theme.spacing.lg }} />
+          <Divider style={{ backgroundColor: theme.colors.onHeroDivider, marginVertical: theme.spacing.lg }} />
 
           <View style={styles.heroSplit}>
             <View style={{ flex: 1, minWidth: 0 }}>
-              <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <AppText variant="caption" tone="onHeroFaint">
                 {`${t('dashboard.income')} · ${formatMonthYear(currentMonthYear(), language)}`}
               </AppText>
-              <Money value={monthStats.income} size="subtitle" color="#ffffff" style={{ marginTop: 2 }} />
+              <Money value={monthStats.income} size="subtitle" color={theme.colors.onHero} style={{ marginTop: 2 }} />
             </View>
-            <View style={[styles.heroDivider, { backgroundColor: 'rgba(255,255,255,0.14)' }]} />
+            <View style={[styles.heroDivider, { backgroundColor: theme.colors.onHeroDivider }]} />
             <View style={{ flex: 1, minWidth: 0, paddingLeft: theme.spacing.lg }}>
-              <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <AppText variant="caption" tone="onHeroFaint">
                 {`${t('dashboard.expense')} · ${formatMonthYear(currentMonthYear(), language)}`}
               </AppText>
-              <Money value={monthStats.expense} size="subtitle" color="#ffffff" style={{ marginTop: 2 }} />
+              <Money value={monthStats.expense} size="subtitle" color={theme.colors.onHero} style={{ marginTop: 2 }} />
             </View>
           </View>
         </HeroCard>

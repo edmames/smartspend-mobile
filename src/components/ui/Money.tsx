@@ -80,7 +80,10 @@ export function Money({
       accessibilityLabel={accessibilityLabel ?? `${formatCurrency(resolvedValue)}`}
       numberOfLines={numberOfLines}
       allowFontScaling={false}
+      // A twelve-digit rupiah figure must never clip, so it shrinks to fit —
+      // but only down to a readable floor, not to the platform's tiny default.
       adjustsFontSizeToFit
+      minimumFontScale={0.72}
       style={[
         {
           color: textColor,

@@ -92,31 +92,31 @@ export default function SavingsScreen() {
 
         <HeroCard style={{ marginTop: theme.spacing.md }}>
           <View style={styles.heroTop}>
-            <AppText variant="micro" style={{ color: 'rgba(255,255,255,0.62)' }}>
+            <AppText variant="micro" tone="onHeroFaint">
               {t('savings.saved').toUpperCase()}
             </AppText>
-            <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            <AppText variant="caption" tone="onHeroMuted">
               {`${completedCount}/${targets.length}`}
             </AppText>
           </View>
 
           <View style={{ marginTop: theme.spacing.sm }}>
-            <Money value={totals.saved} size="money" color="#ffffff" />
+            <Money value={totals.saved} size="money" color={theme.colors.onHero} />
           </View>
 
           <ProgressBar
             ratio={totals.goal > 0 ? totals.saved / totals.goal : 0}
             color={theme.colors.primaryBright}
-            trackColor="rgba(255,255,255,0.16)"
+            trackColor={theme.colors.onHeroDivider}
             height={6}
             style={{ marginTop: theme.spacing.md }}
           />
 
           <View style={[styles.heroFooter, { marginTop: theme.spacing.sm }]}>
-            <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.72)' }} tabular>
+            <AppText variant="caption" tone="onHeroMuted" tabular>
               {`${formatPercentage(totals.percentage, 0, language)} ${t('common.of')} ${formatCurrency(totals.goal)}`}
             </AppText>
-            <AppText variant="caption" style={{ color: 'rgba(255,255,255,0.72)' }} tabular>
+            <AppText variant="caption" tone="onHeroMuted" tabular>
               {`${t('savings.remaining')} ${formatCurrency(totals.remaining)}`}
             </AppText>
           </View>

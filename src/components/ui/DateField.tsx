@@ -211,6 +211,10 @@ export function CalendarSheet({
             <Pressable
               key={date}
               disabled={disabled}
+              /** A bare "16" is meaningless to a screen reader — announce the day. */
+              accessibilityRole="radio"
+              accessibilityState={{ selected, disabled }}
+              accessibilityLabel={formatDateLong(date, language)}
               onPress={() => {
                 haptics.selection();
                 onSelect(date);
