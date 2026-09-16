@@ -31,10 +31,12 @@ import { SettingRow } from '../../src/components/ui/SettingRow';
 import { StorageNotice } from '../../src/components/ui/StorageNotice';
 import { useToast } from '../../src/components/ui/Toast';
 import { APP_VERSION, LANGUAGES, LANGUAGE_LABELS } from '../../src/utils/constants';
+import { useListBottomPadding } from '../../src/utils/layout';
 import type { ImportMode, Language, ThemeMode } from '../../src/types';
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const listBottomPadding = useListBottomPadding();
   const t = useT();
   const toast = useToast();
 
@@ -156,7 +158,7 @@ export default function SettingsScreen() {
         contentContainerStyle={{
           paddingHorizontal: theme.spacing.screen,
           paddingTop: theme.spacing.sm,
-          paddingBottom: 132,
+          paddingBottom: listBottomPadding,
         }}
         showsVerticalScrollIndicator={false}
       >

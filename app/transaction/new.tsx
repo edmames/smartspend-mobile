@@ -16,9 +16,12 @@ import { TransactionForm } from '../../src/components/forms/TransactionForm';
 import { useToast } from '../../src/components/ui/Toast';
 import type { TransactionType } from '../../src/types';
 import { USER_TRANSACTION_TYPES } from '../../src/utils/constants';
+import { useStackScreenBottomPadding } from '../../src/utils/layout';
 
 export default function NewTransactionScreen() {
   const theme = useTheme();
+  // Presented as a modal sheet, so the footer has to clear the home indicator.
+  const stackBottomPadding = useStackScreenBottomPadding();
   const t = useT();
   const toast = useToast();
   const params = useLocalSearchParams<{ type?: string; walletId?: string }>();
@@ -34,7 +37,7 @@ export default function NewTransactionScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: 48 }}
+        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: stackBottomPadding }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

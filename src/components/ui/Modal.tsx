@@ -14,6 +14,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -43,6 +44,7 @@ export function AppModal({
   dismissOnBackdrop = true,
 }: AppModalProps) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const scale = useRef(new Animated.Value(0.9)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -57,7 +59,15 @@ export function AppModal({
   return (
     <RNModal visible={visible} transparent animationType="none" onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView
-        style={styles.root}
+        style={[
+          styles.root,
+          {
+            // `statusBarTranslucent` lets the backdrop cover the status bar, so
+            // the card itself has to stay inside the safe area on its own.
+            paddingTop: Math.max(insets.top, theme.spacing.xl),
+            paddingBottom: Math.max(insets.bottom, theme.spacing.xl),
+          },
+        ]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: theme.colors.overlay, opacity }]}>

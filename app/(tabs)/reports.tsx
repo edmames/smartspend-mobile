@@ -33,9 +33,11 @@ import {
 import { CATEGORY_META, REPORT_TOP_CATEGORIES } from '../../src/utils/constants';
 import { formatCurrency, formatPercentage } from '../../src/utils/formatting';
 import { currentMonthYear, formatDateShort, formatMonthShort, formatWeekdayShort } from '../../src/utils/date';
+import { useListBottomPadding } from '../../src/utils/layout';
 
 export default function ReportsScreen() {
   const theme = useTheme();
+  const listBottomPadding = useListBottomPadding();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -80,7 +82,11 @@ export default function ReportsScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: theme.spacing.screen, paddingTop: theme.spacing.sm, paddingBottom: 132 }}
+        contentContainerStyle={{
+          paddingHorizontal: theme.spacing.screen,
+          paddingTop: theme.spacing.sm,
+          paddingBottom: listBottomPadding,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.headerRow}>

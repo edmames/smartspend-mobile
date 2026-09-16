@@ -6,7 +6,8 @@
  * readable without relying on colour alone.
  */
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme, useT } from '../../src/hooks/useTheme';
 import { Icon, type IconName } from '../../src/components/ui/Icon';
 import { haptics } from '../../src/utils/haptics';
@@ -30,8 +31,15 @@ const TABS: TabDefinition[] = [
 export default function TabsLayout() {
   const theme = useTheme();
   const t = useT();
-  const barHeight = Platform.OS === 'ios' ? 84 : 62;
-  const bottomInset = Platform.OS === 'ios' ? 24 : 8;
+  /**
+   * Derived from the device's real inset rather than a fixed 24/8, so the bar
+   * never clips its labels on a home-indicator device and never reserves dead
+   * space on one without. The measured height is what the scene is inset by,
+   * which is why the list padding below can stay a plain constant.
+   */
+  const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 8);
+  const barHeight = 54 + bottomInset;
 
   return (
     <Tabs

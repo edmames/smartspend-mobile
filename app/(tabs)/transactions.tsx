@@ -37,6 +37,7 @@ import {
   TRANSACTION_TYPE_META,
 } from '../../src/utils/constants';
 import { formatDateLong, formatWeekdayShort } from '../../src/utils/date';
+import { useListBottomPadding } from '../../src/utils/layout';
 import { formatCurrency } from '../../src/utils/formatting';
 import type { CategoryKey, PeriodFilter, Transaction, TransactionType } from '../../src/types';
 
@@ -48,6 +49,7 @@ interface DayGroup {
 
 export default function TransactionsScreen() {
   const theme = useTheme();
+  const listBottomPadding = useListBottomPadding();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -135,7 +137,7 @@ export default function TransactionsScreen() {
       <FlatList
         data={listData}
         keyExtractor={(item) => item.key}
-        contentContainerStyle={{ paddingHorizontal: theme.spacing.screen, paddingBottom: 132 }}
+        contentContainerStyle={{ paddingHorizontal: theme.spacing.screen, paddingBottom: listBottomPadding }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -297,13 +299,15 @@ export default function TransactionsScreen() {
           hasMore ? (
             <View style={{ paddingVertical: theme.spacing.lg }}>
               <ActivityIndicator color={theme.colors.primary} />
+            </View>          ) : transactions.length > 0 ? (
+            /* The running total is a real readout, not fine print — body size,
+               secondary ink, and enough room to sit clear of the tab bar. */
+            <View style={{ paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.md }}>
+              <AppText variant="small" weight="medium" tone="muted" align="center" tabular>
+                {`${formatCurrency(totals.net)} · ${transactions.length} ${t('transaction.found')}`}
+              </AppText>
             </View>
-          ) : transactions.length > 0 ? (
-            <AppText variant="caption" tone="faint" align="center" style={{ paddingVertical: theme.spacing.lg }}>
-              {`${formatCurrency(totals.net)} · ${transactions.length} ${t('transaction.found')}`}
-            </AppText>
-          ) : null
-        }
+          ) : null}
       />
 
       <FAB onPress={() => router.push('/transaction/new')} accessibilityLabel={t('transaction.add')} />

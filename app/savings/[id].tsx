@@ -27,10 +27,12 @@ import { TransactionRow } from '../../src/components/TransactionRow';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency, formatPercentage } from '../../src/utils/formatting';
 import { formatDateLong } from '../../src/utils/date';
+import { useStackScreenBottomPadding } from '../../src/utils/layout';
 import { budgetStatusColor } from '../../src/components/BudgetCard';
 
 export default function SavingsTargetDetailScreen() {
   const theme = useTheme();
+  const stackBottomPadding = useStackScreenBottomPadding();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -86,7 +88,10 @@ export default function SavingsTargetDetailScreen() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 90 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: stackBottomPadding }}
+        showsVerticalScrollIndicator={false}
+      >
         <StackHeader title={t('savings.detail')} subtitle={target.name} fallbackRoute="/(tabs)/savings" />
 
         <HeroCard>

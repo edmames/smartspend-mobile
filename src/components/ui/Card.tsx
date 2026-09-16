@@ -69,10 +69,12 @@ export function Card({
       : {
           backgroundColor: resolved === 'inset' ? colors.cardAlt : colors.card,
           borderRadius: resolved === 'raised' ? radius.lg : radius.lg,
-          // Hairline edge on every card: on the dark indigo base a 10% white
-          // outline is what separates a card from the background.
+          // Hairline edge on every card. Depth on the dark indigo base comes
+          // from this edge rather than a drop shadow — a black shadow on a
+          // near-black page reads as nothing — so it sits at 20% white: clearly
+          // visible as a lit edge, still far from an outline.
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: colors.borderStrong,
         },
     // A whisper of shadow, never more — the hairline does the real work.
     resolved === 'bare' ? null : theme.cardShadow,

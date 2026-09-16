@@ -24,9 +24,11 @@ import { useToast } from '../../src/components/ui/Toast';
 import { CATEGORY_META, PAYMENT_METHOD_META, TRANSACTION_TYPE_META } from '../../src/utils/constants';
 import { formatDateLong } from '../../src/utils/date';
 import { directionOf, formatCurrency } from '../../src/utils/formatting';
+import { useStackScreenBottomPadding } from '../../src/utils/layout';
 
 export default function TransactionDetailScreen() {
   const theme = useTheme();
+  const stackBottomPadding = useStackScreenBottomPadding();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -126,7 +128,10 @@ export default function TransactionDetailScreen() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 80 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: stackBottomPadding }}
+        showsVerticalScrollIndicator={false}
+      >
         <StackHeader title={t('common.details')} subtitle={t(typeKey as never)} fallbackRoute="/(tabs)/transactions" />
 
         {/* Neutral navy panel: the amount sign carries the direction, so the

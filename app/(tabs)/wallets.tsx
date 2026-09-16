@@ -22,9 +22,11 @@ import { WalletCard } from '../../src/components/WalletCard';
 import { WalletForm } from '../../src/components/forms/WalletForm';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency } from '../../src/utils/formatting';
+import { useListBottomPadding } from '../../src/utils/layout';
 
 export default function WalletsScreen() {
   const theme = useTheme();
+  const listBottomPadding = useListBottomPadding();
   const t = useT();
   const toast = useToast();
   const refreshAll = useRefreshAll();
@@ -62,7 +64,11 @@ export default function WalletsScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: theme.spacing.screen, paddingTop: theme.spacing.sm, paddingBottom: 132 }}
+        contentContainerStyle={{
+          paddingHorizontal: theme.spacing.screen,
+          paddingTop: theme.spacing.sm,
+          paddingBottom: listBottomPadding,
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

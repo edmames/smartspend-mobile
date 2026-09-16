@@ -108,6 +108,8 @@ export function TransactionRow({
   }
 
   const sign = direction === 'in' ? '+ ' : direction === 'out' ? '− ' : '';
+  /** Meta reads at body-metadata size normally, one step down on dense rows. */
+  const metaVariant = compact ? 'caption' : 'small';
 
   return (
     <Pressable
@@ -150,7 +152,8 @@ export function TransactionRow({
           color={categoryMeta.color}
           containerSize={markSize}
           size={compact ? 15 : 18}
-          tint={0.14}
+          // Matches the wallet marks: a fuller tile so the glyph reads as a mark.
+          tint={0.2}
         />
       )}
 
@@ -158,15 +161,15 @@ export function TransactionRow({
         <AppText variant={compact ? 'small' : 'body'} weight="medium" numberOfLines={1}>
           {title}
         </AppText>
-        <View style={styles.metaRow}>
+        <View style={[styles.metaRow, { marginTop: theme.spacing.xs }]}>
           {metaParts.map((part, index) => (
             <View key={`${part}_${index}`} style={styles.metaItem}>
               {index > 0 ? (
-                <AppText variant="caption" tone="faint" style={{ marginHorizontal: 4 }}>
+                <AppText variant={metaVariant} tone="faint" style={styles.metaSeparator}>
                   ·
                 </AppText>
               ) : null}
-              <AppText variant="caption" tone="muted" numberOfLines={1} style={{ flexShrink: 1 }}>
+              <AppText variant={metaVariant} tone="muted" numberOfLines={1} style={{ flexShrink: 1 }}>
                 {part}
               </AppText>
             </View>
@@ -232,7 +235,9 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
+  },
+  metaSeparator: {
+    marginHorizontal: 4,
   },
   metaItem: {
     flexDirection: 'row',

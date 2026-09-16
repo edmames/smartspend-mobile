@@ -24,10 +24,13 @@ import { BudgetForm } from '../../src/components/forms/BudgetForm';
 import { useToast } from '../../src/components/ui/Toast';
 import { formatCurrency } from '../../src/utils/formatting';
 import { formatMonthYear } from '../../src/utils/date';
+import { useListBottomPadding } from '../../src/utils/layout';
 import type { BudgetUsage } from '../../src/types';
 
 export default function BudgetScreen() {
   const theme = useTheme();
+  // No tab bar on this route, but the floating add button still sits at the bottom.
+  const listBottomPadding = useListBottomPadding();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -65,7 +68,7 @@ export default function BudgetScreen() {
         contentContainerStyle={{
           paddingHorizontal: theme.spacing.screen,
           paddingTop: theme.spacing.sm,
-          paddingBottom: 132,
+          paddingBottom: listBottomPadding,
         }}
         refreshControl={
           <RefreshControl

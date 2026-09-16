@@ -26,10 +26,12 @@ import { WALLET_BRAND_META, WALLET_TYPE_META } from '../../src/utils/constants';
 import { formatCurrency } from '../../src/utils/formatting';
 import { currentMonthYear, formatDateLong, formatMonthYear } from '../../src/utils/date';
 import { startOfMonthISO } from '../../src/utils/date';
+import { useStackScreenBottomPadding } from '../../src/utils/layout';
 import type { Transaction } from '../../src/types';
 
 export default function WalletDetailScreen() {
   const theme = useTheme();
+  const stackBottomPadding = useStackScreenBottomPadding();
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
@@ -109,7 +111,7 @@ export default function WalletDetailScreen() {
       />
 
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: theme.spacing.screen, paddingBottom: 48 }}
+        contentContainerStyle={{ paddingHorizontal: theme.spacing.screen, paddingBottom: stackBottomPadding }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

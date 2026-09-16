@@ -16,6 +16,7 @@
  */
 import { Platform } from 'react-native';
 import { darkThemeColors, lightThemeColors, palette, type ThemeColors } from './colors';
+import { withAlpha } from '../utils/color';
 
 export type ResolvedThemeMode = 'light' | 'dark';
 
@@ -70,8 +71,10 @@ export const typeScale = {
   subtitle: { fontSize: 20, lineHeight: 28, fontWeight: '600', letterSpacing: -0.2 },
   bodyLarge: { fontSize: 16, lineHeight: 24, fontWeight: '400', letterSpacing: 0 },
   body: { fontSize: 14, lineHeight: 22, fontWeight: '400', letterSpacing: 0.2 },
-  small: { fontSize: 12, lineHeight: 18, fontWeight: '400', letterSpacing: 0.3 },
-  caption: { fontSize: 11.5, lineHeight: 15, fontWeight: '500', letterSpacing: 0.2 },
+  /** Metadata under a row title. 13px is the floor for anything you must read. */
+  small: { fontSize: 13, lineHeight: 19, fontWeight: '400', letterSpacing: 0.25 },
+  /** Fine print only: chip counts, helper hints, weekday squibs. */
+  caption: { fontSize: 12, lineHeight: 16, fontWeight: '500', letterSpacing: 0.2 },
   micro: { fontSize: 11, lineHeight: 14, fontWeight: '700', letterSpacing: 0.5 },
   money: { fontSize: 33, lineHeight: 38, fontWeight: '700', letterSpacing: -1.1 },
   monoLarge: { fontSize: 18, lineHeight: 28, fontWeight: '500', letterSpacing: 0 },
@@ -134,16 +137,6 @@ export interface Elevation {
   elevation?: number;
   /** Web-only equivalent of the `shadow*` trio. */
   boxShadow?: string;
-}
-
-/** `#rrggbb` + alpha → `rgba()`, so one token works on light and dark. */
-function withAlpha(hex: string, alpha: number): string {
-  const clean = hex.replace('#', '');
-  if (clean.length !== 6) return hex;
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function buildElevation(overrides: Partial<Elevation> & { shadowColor: string }): Elevation {

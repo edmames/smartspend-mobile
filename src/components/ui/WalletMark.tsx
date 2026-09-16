@@ -2,8 +2,11 @@
  * WalletMark — identity mark for a wallet.
  *
  * Two looks, one component:
- *  - `tint` (default): glyph in the wallet's colour on a soft ~14% tint — quieter,
- *    blends with the flat-surface design.
+ *  - `tint` (default): glyph in a lifted version of the wallet's colour, on a
+ *    ~20% tint with a matching hairline ring. Brand inks are picked for white
+ *    pages, so on the dark surface the raw colour reads muddy; lifting it keeps
+ *    the hue (BCA stays blue, GoPay stays cyan) while the ring makes the tile
+ *    read as a distinct object rather than a smudge.
  *  - `solid`: white glyph on a deep tile, for use on dark backgrounds (hero cards).
  *
  * Glyphs are hand-drawn vectors on a 24×24 grid: banknote (Cash), bank building
@@ -15,6 +18,7 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, G, Path, Rect, Text as SvgText } from 'react-native-svg';
 import type { WalletBrand, WalletType } from '../../types';
 import { WALLET_BRAND_META, WALLET_TYPE_META } from '../../utils/constants';
+import { lightenHex, withAlpha } from '../../utils/color';
 
 export type { WalletBrand };
 
@@ -24,6 +28,11 @@ const TYPE_INK: Record<WalletType, { accent: string; deep: string }> = {
   bank: { accent: '#3b82f6', deep: '#1e3a8a' },
   ewallet: { accent: '#8b5cf6', deep: '#5b21b6' },
 };
+
+/** Tile fill and glyph lift shared by every tint-variant mark. */
+const TINT_ALPHA = 0.2;
+const TINT_RING_ALPHA = 0.38;
+const GLYPH_LIFT = 0.34;
 
 const MARK_PROPS = {
   fill: 'none',
@@ -49,25 +58,24 @@ export function WalletMark({ type, brand, size = 40, variant = 'tint', style }: 
   const deep = inked?.color ?? TYPE_INK[type].deep;
   const solid = variant === 'solid';
 
-  const background = solid ? deep : `${accent}24`;
-  const glyphColor = solid ? '#ffffff' : accent;
+  const background = solid ? deep : withAlpha(accent, TINT_ALPHA);
+  const glyphColor = solid ? '#ffffff' : lightenHex(accent, GLYPH_LIFT);
 
   return (
     <View style={style}>
       <Svg width={size} height={size} viewBox="0 0 48 48">
         <Rect x="0" y="0" width="48" height="48" rx={Math.round(size * 0.32)} fill={background} />
-        {solid ? (
-          <Rect
-            x="0.9"
-            y="0.9"
-            width="46.2"
-            height="46.2"
-            rx={Math.round(size * 0.32) - 1}
-            fill="none"
-            stroke="rgba(255,255,255,0.16)"
-            strokeWidth="1.4"
-          />
-        ) : null}
+        {/* Hairline edge: brings the tile forward off the card behind it. */}
+        <Rect
+          x="0.9"
+          y="0.9"
+          width="46.2"
+          height="46.2"
+          rx={Math.round(size * 0.32) - 1}
+          fill="none"
+          stroke={solid ? 'rgba(255,255,255,0.16)' : withAlpha(accent, TINT_RING_ALPHA)}
+          strokeWidth="1.6"
+        />
 
         {inked ? (
           <SvgText
@@ -97,11 +105,22 @@ export function WalletMark({ type, brand, size = 40, variant = 'tint', style }: 
 export function SavingsMark({ size = 38, style }: { size?: number; style?: StyleProp<ViewStyle> }) {
   // Cyan — matches the semantic `savingsColor` token.
   const accent = '#06b6d4';
+  const glyph = lightenHex(accent, GLYPH_LIFT);
   return (
     <View style={style}>
       <Svg width={size} height={size} viewBox="0 0 48 48">
-        <Rect x="0" y="0" width="48" height="48" rx={Math.round(size * 0.32)} fill={`${accent}24`} />
-        <G transform="translate(12, 12)" {...MARK_PROPS} stroke={accent}>
+        <Rect x="0" y="0" width="48" height="48" rx={Math.round(size * 0.32)} fill={withAlpha(accent, TINT_ALPHA)} />
+        <Rect
+          x="0.9"
+          y="0.9"
+          width="46.2"
+          height="46.2"
+          rx={Math.round(size * 0.32) - 1}
+          fill="none"
+          stroke={withAlpha(accent, TINT_RING_ALPHA)}
+          strokeWidth="1.6"
+        />
+        <G transform="translate(12, 12)" {...MARK_PROPS} stroke={glyph}>
           <Path d="M5 21V4.6l14 0" />
           <Path d="M5 12.6h12.4" />
           <Circle cx="18.4" cy="18.4" r="4.2" />
