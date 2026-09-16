@@ -28,7 +28,7 @@ import type { SavingsTarget, TargetProgress } from '../../src/types';
 
 export default function SavingsScreen() {
   const theme = useTheme();
-  const listBottomPadding = useListBottomPadding();
+  const listBottomPadding = useListBottomPadding({ hasFab: true });
   const fabBottomOffset = useFabBottomOffset();
   const t = useT();
   const language = useLanguage();

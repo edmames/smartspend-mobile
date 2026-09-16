@@ -48,18 +48,32 @@ export function useFabFootprint(): number {
 }
 
 /**
- * Bottom padding for scrollable content on a tab screen (with or without a
- * `<FAB />`):
+ * Bottom padding for scrollable content on a tab screen.
+ *
+ * `hasFab: true` (default, screens with a contextual `<FAB />`):
  *
  *   tab bar body + safe-area inset   (navigation chrome)
  * + FAB gap + FAB height             (the FAB's full footprint)
- * + breathing room                   (so the last card never touches the FAB)
+ * + breathing room
  *
- * This lets ANY section — including the wide "Tren 1 Bulan" chart card whose
- * legend hugs the right edge — scroll completely above the FAB exclusion zone.
+ * `hasFab: false` (read/overview screens like the Dashboard, which render no
+ * floating overlay):
+ *
+ *   tab bar body + safe-area inset
+ * + breathing room
+ *
+ * One centralized source of truth — screens never hand-compute padding.
  */
-export function useListBottomPadding(extra = 0): number {
-  return useTabChromeHeight() + useFabFootprint() + CONTENT_BREATHING_ROOM + extra;
+export function useListBottomPadding(
+  options: { hasFab?: boolean; extra?: number } = {},
+): number {
+  const { hasFab = true, extra = 0 } = options;
+  return (
+    useTabChromeHeight() +
+    (hasFab ? useFabFootprint() : 0) +
+    CONTENT_BREATHING_ROOM +
+    extra
+  );
 }
 
 /**

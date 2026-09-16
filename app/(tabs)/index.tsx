@@ -22,7 +22,6 @@ import { Card, HeroCard, SectionHeader } from '../../src/components/ui/Card';
 import { Icon } from '../../src/components/ui/Icon';
 import { Money } from '../../src/components/ui/Money';
 import { EmptyState } from '../../src/components/ui/EmptyState';
-import { FAB } from '../../src/components/ui/FAB';
 import { Stagger } from '../../src/components/ui/Stagger';
 import { DashboardSkeleton } from '../../src/components/ui/Skeleton';
 import { TransactionRow } from '../../src/components/TransactionRow';
@@ -40,7 +39,7 @@ import { formatCurrency } from '../../src/utils/formatting';
 import { CATEGORY_META } from '../../src/utils/constants';
 import { DASHBOARD_RECENT_TRANSACTIONS, DASHBOARD_TOP_WALLETS } from '../../src/utils/constants';
 import { useCountUp } from '../../src/utils/motion';
-import { useFabBottomOffset, useListBottomPadding } from '../../src/utils/layout';
+import { useListBottomPadding } from '../../src/utils/layout';
 
 /** Unequal but still valid flex ratios (a zero share must not collapse). */
 const ratio = (value: number) => (value > 0 ? value : 0.0001);
@@ -50,8 +49,7 @@ export default function DashboardScreen() {
   const t = useT();
   const language = useLanguage();
   const refreshAll = useRefreshAll();
-  const listBottomPadding = useListBottomPadding();
-  const fabBottomOffset = useFabBottomOffset();
+  const listBottomPadding = useListBottomPadding({ hasFab: false });
 
   const user = useAuthStore((state) => state.user);
   const transactions = useTransactionStore((state) => state.transactions);
@@ -386,8 +384,6 @@ export default function DashboardScreen() {
           </Card>
         </ScrollView>
       )}
-
-      <FAB bottomOffset={fabBottomOffset} onPress={() => router.push('/transaction/new')} accessibilityLabel={t('transaction.add')} />
     </SafeAreaView>
   );
 }

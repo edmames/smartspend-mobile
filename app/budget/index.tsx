@@ -30,7 +30,7 @@ import type { BudgetUsage } from '../../src/types';
 export default function BudgetScreen() {
   const theme = useTheme();
   // No tab bar on this route, but the floating add button still sits at the bottom.
-  const listBottomPadding = useListBottomPadding();
+  const listBottomPadding = useListBottomPadding({ hasFab: true });
   const fabBottomOffset = useFabBottomOffset();
   const t = useT();
   const language = useLanguage();

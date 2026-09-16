@@ -36,7 +36,7 @@ import type { ImportMode, Language, ThemeMode } from '../../src/types';
 
 export default function SettingsScreen() {
   const theme = useTheme();
-  const listBottomPadding = useListBottomPadding();
+  const listBottomPadding = useListBottomPadding({ hasFab: false });
   const t = useT();
   const toast = useToast();
 

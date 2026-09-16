@@ -37,7 +37,7 @@ import { useListBottomPadding } from '../../src/utils/layout';
 
 export default function ReportsScreen() {
   const theme = useTheme();
-  const listBottomPadding = useListBottomPadding();
+  const listBottomPadding = useListBottomPadding({ hasFab: false });
   const t = useT();
   const language = useLanguage();
   const toast = useToast();
