@@ -1,9 +1,9 @@
 /**
  * Bottom tab navigation: Home · Transactions · Wallets · Savings · Reports · Settings.
  *
- * The bar uses a translucent indigo surface with a hairline top edge; the
- * active tab is marked by a small teal pill indicator plus colour, so state is
- * readable without relying on colour alone.
+ * The bar is explicitly fixed to the bottom of the scene. Every scrollable
+ * screen reserves its measured footprint, so content never disappears behind
+ * the navigation chrome.
  */
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
@@ -49,6 +49,11 @@ export default function TabsLayout() {
         tabBarActiveTintColor: theme.colors.primaryBright,
         tabBarInactiveTintColor: theme.colors.textFaint,
         tabBarStyle: {
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 50,
           backgroundColor: theme.colors.tabBar,
           borderTopColor: theme.colors.tabBarBorder,
           borderTopWidth: StyleSheet.hairlineWidth,

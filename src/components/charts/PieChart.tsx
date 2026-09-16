@@ -3,7 +3,15 @@
  * total in the centre. The legend doubles as the value table.
  */
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import Svg, { Circle, G, Path } from 'react-native-svg';
 import { useTheme, useLanguage } from '../../hooks/useTheme';
 import { AppText } from '../ui/AppText';
@@ -27,6 +35,8 @@ export interface PieChartProps {
   style?: StyleProp<ViewStyle>;
   showLegend?: boolean;
   maxLegendItems?: number;
+  /** Layout for narrow screens; stacked keeps the legend from being squeezed. */
+  layout?: 'auto' | 'row' | 'stacked';
 }
 
 function polarToCartesian(cx: number, cy: number, radius: number, angleDeg: number) {
@@ -50,10 +60,13 @@ export function PieChart({
   style,
   showLegend = true,
   maxLegendItems = 5,
+  layout = 'auto',
 }: PieChartProps) {
   const theme = useTheme();
   const language = useLanguage();
+  const { width } = useWindowDimensions();
   const reduced = useReducedMotion();
+  const stacked = layout === 'stacked' || (layout === 'auto' && width < 440);
 
   /* The ring and its legend settle in once — scale up a touch while fading. */
   const enter = useRef(new Animated.Value(reduced ? 1 : 0)).current;
@@ -94,8 +107,10 @@ export function PieChart({
   const singleFullRing = arcs.length === 1 && arcs[0].sweep >= 359.99;
 
   return (
-    <View style={[styles.container, style]}>
-      <Animated.View style={[{ width: size, height: size }, ringStyle]}>
+    <View style={[styles.container, stacked ? styles.stackedContainer : null, style]}>
+      <Animated.View
+        style={[{ width: size, height: size }, stacked ? styles.stackedChart : null, ringStyle]}
+      >
         <Svg width={size} height={size}>
           <G>
             {total <= 0 ? (
@@ -143,7 +158,7 @@ export function PieChart({
       </Animated.View>
 
       {showLegend ? (
-        <View style={styles.legend}>
+        <View style={[styles.legend, stacked ? styles.stackedLegend : null]}>
           {visible.map((slice, index) => {
             const percentage = total > 0 ? (slice.value / total) * 100 : 0;
             return (
@@ -178,6 +193,14 @@ const styles = StyleSheet.create({
     gap: 18,
     flexWrap: 'wrap',
   },
+  stackedContainer: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 12,
+  },
+  stackedChart: {
+    alignSelf: 'center',
+  },
   center: {
     position: 'absolute',
     top: 0,
@@ -191,6 +214,10 @@ const styles = StyleSheet.create({
   legend: {
     flex: 1,
     minWidth: 150,
+  },
+  stackedLegend: {
+    width: '100%',
+    minWidth: 0,
   },
   legendRow: {
     flexDirection: 'row',
